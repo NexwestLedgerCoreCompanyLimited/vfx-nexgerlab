@@ -94,15 +94,33 @@ export function createProjectFromEffect(
   });
 }
 
-/** Exports leave the character out, so an acted effect has fewer frames than its stage. */
+/**
+ * Exports follow the timeline, with one exception. Exports leave the character out, so
+ * while the timeline is still an acted effect's stage length, the tail would be blank.
+ */
 export function exportFrameCount(project: ProjectV1): number {
-  let frames = 1;
+  const { frames } = project.timeline;
+  if (project.spriteAttachments.length > 0) return frames;
+  let end = 1;
+  let stage = 0;
+  let acted = false;
   for (const layer of project.layers) {
     const mod = getEffect(layer.effectId);
-    if (mod)
-      frames = Math.max(frames, layer.startFrame + Math.ceil(oneShotFrames(mod) / layer.speed));
+    if (!mod) continue;
+    end = Math.max(end, layer.startFrame + Math.ceil(oneShotFrames(mod) / layer.speed));
+    stage = Math.max(stage, stageFor(mod).frames);
+    acted ||= Boolean(mod.act) && !layer.actorAssetId;
   }
-  return Math.min(project.timeline.frames, frames);
+  return acted && frames <= stage ? Math.min(frames, end) : frames;
+}
+
+/** Assets the project draws with that are not in memory, so an export would silently drop them. */
+export function missingAssetIds(project: ProjectV1, loaded: ReadonlySet<string>): string[] {
+  const used = [
+    ...project.spriteAttachments.map((a) => a.assetId),
+    ...project.layers.flatMap((l) => (l.actorAssetId ? [l.actorAssetId] : [])),
+  ];
+  return [...new Set(used)].filter((id) => !loaded.has(id));
 }
 
 /** Some effects paint on the character, so without a custom sprite their pixels include the stock one. */

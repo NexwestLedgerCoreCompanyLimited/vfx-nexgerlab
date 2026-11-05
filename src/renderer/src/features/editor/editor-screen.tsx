@@ -71,15 +71,16 @@ export function EditorScreen({
   }, [project, before, parent, editor.previewDirection]);
   if (!project || !shown) return null;
 
+  async function leave() {
+    if (editor.dirty && handle) await save();
+    else if (editor.dirty && !window.confirm(t('leaveUnsaved'))) return;
+    editor.go('home');
+  }
+
   return (
     <div className="studio">
       <header className="bar">
-        <button
-          className="brand"
-          type="button"
-          aria-label={t('back')}
-          onClick={() => editor.go('home')}
-        >
+        <button className="brand" type="button" aria-label={t('back')} onClick={() => void leave()}>
           <img src={logoUrl} alt="" />
         </button>
         <b>{project.name}</b>

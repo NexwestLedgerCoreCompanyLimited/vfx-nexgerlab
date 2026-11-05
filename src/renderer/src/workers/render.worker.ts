@@ -17,6 +17,11 @@ let assets: ReadonlyMap<string, AssetFrame[]> = new Map();
 self.onmessage = (event: MessageEvent<RenderRequest>) => {
   const { id, project, frameIndex, options } = event.data;
   if (event.data.assets) assets = event.data.assets;
-  const { frame, errors } = renderProjectFrame(project, frameIndex, assets, options, cache);
-  (self as unknown as Worker).postMessage({ id, frame, errors }, [frame.pixels.buffer]);
+  const port = self as unknown as Worker;
+  try {
+    const { frame, errors } = renderProjectFrame(project, frameIndex, assets, options, cache);
+    port.postMessage({ id, frame, errors }, [frame.pixels.buffer]);
+  } catch (error) {
+    port.postMessage({ id, failure: (error as Error).message });
+  }
 };

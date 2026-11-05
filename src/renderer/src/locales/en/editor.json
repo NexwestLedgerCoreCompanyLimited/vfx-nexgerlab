@@ -154,5 +154,6 @@
   "directionAngle": "Angle override",
   "directionSpeed": "Speed override",
   "hideInDirection": "Hide this layer in this direction",
-  "resetDirection": "Reset this direction"
+  "resetDirection": "Reset this direction",
+  "leaveUnsaved": "This project has not been saved. Leave without saving?"
 }

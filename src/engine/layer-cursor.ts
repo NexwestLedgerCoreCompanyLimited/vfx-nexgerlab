@@ -48,6 +48,7 @@ export function createLayerCursor(
       x: layer.x,
       y: layer.y,
       light: layer.light,
+      ...(actor ? { actor } : {}),
     };
     live = (acted ? createAct : createFx)(mod, options) as Live;
     at = 0;

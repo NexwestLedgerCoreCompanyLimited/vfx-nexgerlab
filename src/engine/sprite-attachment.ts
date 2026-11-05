@@ -30,7 +30,9 @@ export function resolveAttachmentFrame(
   attachment: SpriteAttachment,
   outputFrame: number,
 ): ResolvedSpriteFrame {
-  const sourceFrameIndex = attachment.outputToSourceFrames[outputFrame];
+  // a longer timeline than the sprite map keeps looping the sprite
+  const map = attachment.outputToSourceFrames;
+  const sourceFrameIndex = map[outputFrame % map.length];
   if (sourceFrameIndex === undefined) throw new RangeError(`No output frame ${outputFrame}`);
   const set = attachment.frameAnchors.find((f) => f.sourceFrameIndex === sourceFrameIndex);
   return {

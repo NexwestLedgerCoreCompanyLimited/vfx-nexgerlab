@@ -5,6 +5,7 @@ import { paintFrame } from '../../engine/canvas-renderer';
 import { renderClient } from '../../engine/client';
 import { useEditor } from '../editor/use-editor-store';
 import { ActLane } from './act-lane';
+import { ProjectSize } from './project-size';
 
 const STRIP = 10;
 const STRIP_DELAY_MS = 300;
@@ -95,6 +96,8 @@ export function TimelinePanel({ options }: { options: RenderOptions }) {
           {t('position', { time: (currentFrame / fps).toFixed(2), total: seconds.toFixed(2) })}
         </span>
         <span className="mono small muted">{t('frame', { frame: currentFrame, fps })}</span>
+        <span className="sp" />
+        <ProjectSize />
       </div>
       <div className="tl-grid">
         <span />

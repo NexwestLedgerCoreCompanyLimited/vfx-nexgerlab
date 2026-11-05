@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { savePreset } from '../../../../engine/presets';
 import type { BackdropKind } from '../../../../engine/render-types';
 import { PreviewCanvas, fitZoom, usePlayback } from '../canvas/preview-canvas';
 import { useEditor } from '../editor/use-editor-store';
@@ -18,7 +17,7 @@ const STAGE_H = 680;
 
 export function QuickLook() {
   const { t } = useTranslation('editor');
-  const { project, currentFrame, playback, setPlayback, go, replaceProject } = useEditor();
+  const { project, currentFrame, playback, setPlayback, go } = useEditor();
   const layer = project?.layers[0];
   const entry = layer && entryFor(layer.effectId);
   const [rate, setRate] = useState(1);
@@ -48,14 +47,6 @@ export function QuickLook() {
           ‹ {t('back')}
         </button>
         <span className="mono small muted">{entry.id}</span>
-        <span className="sp" />
-        <button
-          className="btn"
-          type="button"
-          onClick={() => replaceProject(savePreset(project, { name, tags: meta.tags }))}
-        >
-          {t('saveEffect')}
-        </button>
       </header>
       <div className="look">
         <div className={`look-stage${kindNow === 'none' ? ' ck' : ''}`}>

@@ -169,7 +169,7 @@ export function HomeScreen({ language, onLanguage }: Props) {
             <aside className="panel recent" aria-label={t('home.recent')}>
               <span className="sect">{t('home.recent')}</span>
               {recent.length === 0 && <p className="muted small">{t('home.noRecent')}</p>}
-              {recent.slice(0, 3).map((r) => (
+              {recent.map((r) => (
                 <div className="row" key={r.path}>
                   <button
                     className="link"

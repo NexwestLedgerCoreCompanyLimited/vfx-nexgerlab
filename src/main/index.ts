@@ -1,4 +1,4 @@
-import { BrowserWindow, app, ipcMain, session } from 'electron';
+import { BrowserWindow, app, dialog, ipcMain, session } from 'electron';
 import { join } from 'node:path';
 import { IPC, type AppInfo } from '../shared/contracts/ipc';
 import { LanguageSchema } from '../shared/models/preferences';
@@ -33,6 +33,24 @@ function createWindow(): void {
     webPreferences: { ...WEB_PREFERENCES, preload: join(__dirname, '../preload/index.js') },
   });
   win.once('ready-to-show', () => win.show());
+  win.webContents.on('will-prevent-unload', (event) => {
+    const leave = dialog.showMessageBoxSync(win, {
+      type: 'warning',
+      message: 'You have unsaved changes.',
+      buttons: ['Leave without saving', 'Keep working'],
+      defaultId: 1,
+      cancelId: 1,
+    });
+    if (leave === 0) event.preventDefault();
+  });
+  win.webContents.on('render-process-gone', (_event, details) => {
+    if (details.reason === 'clean-exit') return;
+    dialog.showErrorBox(
+      'VFX NexgerLab stopped',
+      'The window will reload. Unsaved changes may be lost.',
+    );
+    win.webContents.reload();
+  });
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   win.webContents.on('will-navigate', (event, url) => {
     if (url !== win.webContents.getURL()) event.preventDefault();

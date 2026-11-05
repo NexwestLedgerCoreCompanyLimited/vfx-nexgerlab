@@ -116,7 +116,7 @@ export const VersionSnapshotSchema = z.strictObject({
   parentId: id.optional(),
   label: z.string().min(1).max(120),
   createdAt: timestamp,
-  layers: z.array(EffectLayerSchema),
+  layers: z.array(EffectLayerSchema).max(64),
   spriteAttachments: z.array(SpriteAttachmentSchema),
 });
 export type VersionSnapshot = z.infer<typeof VersionSnapshotSchema>;
@@ -125,7 +125,7 @@ export const PresetDescriptorSchema = z.strictObject({
   id,
   name: z.string().min(1).max(120),
   tags: z.array(z.string().max(40)).max(32),
-  layers: z.array(EffectLayerSchema),
+  layers: z.array(EffectLayerSchema).max(64),
 });
 export type PresetDescriptor = z.infer<typeof PresetDescriptorSchema>;
 

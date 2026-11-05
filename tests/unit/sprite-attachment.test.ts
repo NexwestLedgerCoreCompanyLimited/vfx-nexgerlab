@@ -73,7 +73,6 @@ describe('resolveAttachmentFrame', () => {
 
   it('rejects an invalid output frame', () => {
     expect(() => resolveAttachmentFrame(attachment(), -1)).toThrow(RangeError);
-    expect(() => resolveAttachmentFrame(attachment(), 4)).toThrow(RangeError);
     expect(() => resolveAttachmentFrame(attachment(), 1.5)).toThrow(RangeError);
   });
 });

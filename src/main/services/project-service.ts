@@ -13,6 +13,8 @@ const MAX_RECENT = 10;
 
 export type ProjectOpenCode = 'corrupt' | 'unknown-version' | 'not-found';
 
+const MAX_PROJECT_BYTES = 32 * 1024 * 1024;
+
 export class ProjectOpenError extends Error {
   constructor(readonly code: ProjectOpenCode) {
     super(`Could not open project: ${code}`);
@@ -69,6 +71,7 @@ export function createProjectService({
 
   async function readValid(file: string): Promise<ProjectV1 | undefined> {
     try {
+      if ((await fs.size(file)) > MAX_PROJECT_BYTES) return undefined;
       return migrateProject(JSON.parse(await fs.read(file)));
     } catch {
       return undefined;
@@ -86,9 +89,11 @@ export function createProjectService({
   async function openProject(path: string): Promise<ProjectHandle> {
     let text: string;
     try {
+      if ((await fs.size(join(path, PROJECT_FILE))) > MAX_PROJECT_BYTES)
+        throw new ProjectOpenError('corrupt');
       text = await fs.read(join(path, PROJECT_FILE));
-    } catch {
-      throw new ProjectOpenError('not-found');
+    } catch (error) {
+      throw error instanceof ProjectOpenError ? error : new ProjectOpenError('not-found');
     }
     let project: ProjectV1;
     try {
@@ -126,7 +131,9 @@ export function createProjectService({
     saveProject,
 
     async createProject(input: { parentDir: string; name: string }): Promise<ProjectHandle> {
-      const path = join(input.parentDir, safeFolderName(input.name));
+      const base = join(input.parentDir, safeFolderName(input.name));
+      let path = base;
+      for (let n = 2; await fs.exists(path); n++) path = `${base} ${n}`;
       await fs.mkdir(path);
       for (const dir of ['assets', 'presets', 'exports']) await fs.mkdir(join(path, dir));
       const project = newProject(input.name);

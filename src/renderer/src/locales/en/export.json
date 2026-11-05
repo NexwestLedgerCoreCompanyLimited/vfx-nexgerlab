@@ -62,5 +62,8 @@
   "failed": "The export failed, so nothing was written.",
   "normal": "Normal map",
   "normalStrength": "Normal strength",
-  "stockBody": "This effect paints on the character, so the stock character is in the output. Use your own sprite in Studio to replace it."
+  "stockBody": "This effect paints on the character, so the stock character is in the output. Use your own sprite in Studio to replace it.",
+  "layerFailed": "The export stopped because a layer failed: {{reason}}",
+  "missingAssets": "{{count}} sprites could not be loaded. Restore the files or remove them, then export.",
+  "assetsLoading": "Loading sprites…"
 }

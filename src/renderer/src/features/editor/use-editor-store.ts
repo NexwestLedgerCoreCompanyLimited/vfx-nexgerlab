@@ -12,6 +12,9 @@ export type Playback = 'stopped' | 'playing';
 
 interface EditorState {
   route: Route;
+  returnRoute: Route;
+  assetsReady: boolean;
+  missingAssets: string[];
   project?: ProjectV1 | undefined;
   handle?: ProjectHandle | undefined;
   history?: History | undefined;
@@ -43,6 +46,9 @@ interface EditorState {
 
 const blank = {
   route: 'home' as Route,
+  returnRoute: 'home' as Route,
+  assetsReady: true,
+  missingAssets: [] as string[],
   project: undefined,
   handle: undefined,
   history: undefined,
@@ -79,13 +85,20 @@ export const useEditor = create<EditorState>((set, get) => {
       currentFrame: 0,
       playback: 'playing',
       dirty: false,
+      assetsReady: project.assets.length === 0,
+      missingAssets: [],
       previewDirection: undefined,
     });
 
   return {
     ...blank,
     reset: () => set(blank),
-    go: (route) => set({ route, currentFrame: 0 }),
+    go: (route) =>
+      set((s) => ({
+        route,
+        currentFrame: 0,
+        returnRoute: route === 'export' ? s.route : s.returnRoute,
+      })),
     openEffect: (id, name, language) =>
       load(createProjectFromEffect(id, { name, language }), 'quick-look'),
     openBlank: (name, startTab = 'layers') => {

@@ -5,6 +5,7 @@ import type { Language, Preferences } from '../../shared/models/preferences';
 import { CharactersScreen } from './features/characters/characters-screen';
 import { ConnectScreen } from './features/connect/connect-screen';
 import { EditorScreen } from './features/editor/editor-screen';
+import { useProjectAssets } from './features/assets/use-project-assets';
 import { useEditor } from './features/editor/use-editor-store';
 import { ExportScreen } from './features/export/export-dialog';
 import { setGalleryReduced } from './features/home/effect-grid';
@@ -22,6 +23,15 @@ export function App() {
   const [progress, setProgress] = useState(0);
   const [splashDone, setSplashDone] = useState(false);
   const route = useEditor((s) => s.route);
+  useProjectAssets();
+
+  useEffect(() => {
+    const guard = (event: BeforeUnloadEvent) => {
+      if (useEditor.getState().dirty) event.preventDefault();
+    };
+    window.addEventListener('beforeunload', guard);
+    return () => window.removeEventListener('beforeunload', guard);
+  }, []);
 
   useEffect(() => {
     void (async () => {

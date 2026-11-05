@@ -11,8 +11,12 @@ files:
 extraResources:
   - from: THIRD_PARTY_NOTICES.md
     to: THIRD_PARTY_NOTICES.md
+  - from: THIRD_PARTY_LICENSES.txt
+    to: THIRD_PARTY_LICENSES.txt
   - from: LICENSE
     to: LICENSE
+  - from: NOTICE.md
+    to: NOTICE.md
 artifactName: VFX-NexgerLab-${os}-${arch}.${ext}
 mac:
   target: [dmg]

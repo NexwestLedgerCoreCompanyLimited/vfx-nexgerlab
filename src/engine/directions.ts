@@ -79,8 +79,16 @@ export function resolveDirectionProject(
       visible: layer.visible && !override?.hiddenLayers?.includes(layer.id),
     };
   });
-  const canvas = room ? { ...project.canvas, width: room.side, height: room.side } : project.canvas;
-  return { ...project, canvas, layers };
+  if (!room) return { ...project, layers };
+  const spriteAttachments = project.spriteAttachments.map((attachment) => ({
+    ...attachment,
+    frameAnchors: attachment.frameAnchors.map((set) => ({
+      ...set,
+      anchor: { x: set.anchor.x + room.dx, y: set.anchor.y + room.dy },
+    })),
+  }));
+  const canvas = { ...project.canvas, width: room.side, height: room.side };
+  return { ...project, canvas, layers, spriteAttachments };
 }
 
 export function setDirectionCount(project: ProjectV1, count: DirectionCount): ProjectV1 {

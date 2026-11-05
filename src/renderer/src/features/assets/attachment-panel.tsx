@@ -2,17 +2,16 @@ import { supportsCustomActor } from '../../../../engine/actor-adapter';
 import { encodePng } from '../../../../engine/exporters/png';
 import { ASE_MAGIC, decodeAseprite } from '../../../../engine/importers/aseprite';
 import type { ProjectHandle } from '../../../../shared/contracts/ipc';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   mapOutputFrames,
   resolveAttachmentFrame,
   setFrameAnchor,
 } from '../../../../engine/sprite-attachment';
-import type { AssetFrame, StripLayout } from '../../../../shared/models/asset';
+import type { StripLayout } from '../../../../shared/models/asset';
 import type { AssetRef, SpriteAttachment, SpriteFx } from '../../../../shared/schemas/project';
 import { newId } from '../../../../shared/utils/id';
-import { renderClient } from '../../engine/client';
 import { useEditor } from '../editor/use-editor-store';
 import { decodeImage } from './decode-image';
 import { ImportDialog } from './import-dialog';
@@ -127,21 +126,6 @@ export function AttachmentPanel({ onSave }: { onSave(): Promise<void> }) {
   const { project, handle, currentFrame, replaceProject, selectedLayerId } = useEditor();
   const [asking, setAsking] = useState(false);
   const [error, setError] = useState<string>();
-
-  const assetsKey = project?.assets.map((a) => a.id).join();
-  useEffect(() => {
-    if (!handle || !project) return;
-    void (async () => {
-      const map = new Map<string, AssetFrame[]>();
-      for (const ref of project.assets) {
-        if (!handle.missingAssets.includes(ref.id))
-          map.set(ref.id, await window.vfxlab.readAssetFrames(handle.path, ref));
-      }
-      renderClient().setAssets(map);
-      useEditor.setState((s) => ({ renderRevision: s.renderRevision + 1 }));
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handle?.path, assetsKey]);
 
   if (!project) return null;
   const layer = project.layers.find((l) => l.id === selectedLayerId);

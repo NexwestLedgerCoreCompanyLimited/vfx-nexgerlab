@@ -94,8 +94,15 @@ function gifFrames(bytes: Buffer): AssetFrame[] {
   let parts: ParsedFrame[];
   try {
     const gif = parseGIF(new Uint8Array(bytes).buffer);
-    const count = gif.frames.filter((f) => 'image' in f).length;
-    if (count > MAX_FRAMES || count * width * height > MAX_TOTAL_PIXELS)
+    // frames carry their own size, and the decoder allocates from it, not from the screen
+    const images = gif.frames.flatMap((f) => ('image' in f ? [f.image.descriptor] : []));
+    const pixels = images.reduce((sum, d) => sum + d.width * d.height, 0);
+    if (
+      images.length > MAX_FRAMES ||
+      images.length * width * height > MAX_TOTAL_PIXELS ||
+      pixels > MAX_TOTAL_PIXELS ||
+      images.some((d) => d.width > width || d.height > height)
+    )
       throw new AssetError('too-large');
     parts = decompressFrames(gif, true) as ParsedFrame[];
   } catch (error) {
@@ -218,7 +225,13 @@ export async function removeAsset(
   assetId: string,
 ): Promise<void> {
   const uses = (list: ProjectV1['spriteAttachments']) => list.some((a) => a.assetId === assetId);
-  if (uses(project.spriteAttachments) || project.versions.some((v) => uses(v.spriteAttachments))) {
+  const character = (list: ProjectV1['layers']) => list.some((l) => l.actorAssetId === assetId);
+  if (
+    uses(project.spriteAttachments) ||
+    project.versions.some((v) => uses(v.spriteAttachments)) ||
+    character(project.layers) ||
+    project.versions.some((v) => character(v.layers))
+  ) {
     throw new AssetError('in-use');
   }
   const ref = project.assets.find((a) => a.id === assetId);

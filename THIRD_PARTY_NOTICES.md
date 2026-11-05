@@ -10,7 +10,7 @@ VFX NexgerLab is licensed under BSL 1.1, except for the material below, which ke
 - Copyright (c) 2026 Hugo Duprez. `src/core/sim.js` and effects that say so in their first lines adapt Sprite Fusion's open-source pixel art VFX.
 - Copyright (c) 2026 rehan-remade. `src/core/act.js` adapts how Hollow Crown plays its skills.
 
-The full MIT text is in `src/engine/pixelfx/LICENSE`, and details are in `src/engine/pixelfx/NOTICE.md`. The Patch Pixel font is not included.
+The full license texts of everything below are in `THIRD_PARTY_LICENSES.txt`, which ships with the app. Details are in `src/engine/pixelfx/NOTICE.md`. The Patch Pixel font is not included.
 
 ## Fonts
 
@@ -23,8 +23,8 @@ All SIL Open Font License 1.1, bundled through Fontsource.
 | JetBrains Mono | Values and timecode | The JetBrains Mono Project Authors |
 | Pixelify Sans  | Wordmark            | The Pixelify Sans Project Authors  |
 
-Full license texts ship in each `@fontsource` package.
+Full license texts are in `THIRD_PARTY_LICENSES.txt`.
 
 ## Runtime libraries
 
-React, React DOM, Zustand, Zod, i18next, react-i18next, pngjs, gifuct-js, gifenc, and fflate are MIT licensed. Their license texts ship in each package. Electron is MIT licensed and bundles Chromium, whose notices ship with the app as `LICENSES.chromium.html`.
+React, React DOM, Zustand, Zod, i18next, react-i18next, pngjs, gifuct-js, js-binary-schema-parser, gifenc, and fflate are MIT licensed. Their license texts are in `THIRD_PARTY_LICENSES.txt`. Electron is MIT licensed and bundles Chromium, whose notices ship with the app as `LICENSES.chromium.html`.

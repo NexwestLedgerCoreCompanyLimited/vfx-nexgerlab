@@ -3,6 +3,18 @@ import { useEditor } from './use-editor-store';
 
 const AUTOSAVE_MS = 1000;
 
+/** Writes the project. An edit that lands during the write stays dirty, so autosave comes back for it. */
+export async function saveCurrent(): Promise<void> {
+  const { project, handle, setHandle, renderRevision } = useEditor.getState();
+  if (!project) return;
+  const target = handle ?? (await window.vfxlab.createProject(project.name));
+  if (!target) return;
+  const stamped = { ...project, updatedAt: new Date().toISOString() };
+  await window.vfxlab.saveProject(target.path, stamped);
+  if (!handle) setHandle({ ...target, project: stamped });
+  if (useEditor.getState().renderRevision === renderRevision) useEditor.getState().markSaved();
+}
+
 /** Saves through the atomic project service. Autosave starts once the project has a folder. */
 export function useSave() {
   const [saving, setSaving] = useState(false);
@@ -12,16 +24,9 @@ export function useSave() {
   const path = useEditor((s) => s.handle?.path);
 
   const save = useCallback(async () => {
-    const { project, handle, markSaved, setHandle } = useEditor.getState();
-    if (!project) return;
     setSaving(true);
     try {
-      const target = handle ?? (await window.vfxlab.createProject(project.name));
-      if (!target) return;
-      const stamped = { ...project, updatedAt: new Date().toISOString() };
-      await window.vfxlab.saveProject(target.path, stamped);
-      if (!handle) setHandle({ ...target, project: stamped });
-      markSaved();
+      await saveCurrent();
       setFailed(false);
     } catch {
       setFailed(true);

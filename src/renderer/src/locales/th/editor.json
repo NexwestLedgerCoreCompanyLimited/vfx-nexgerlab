@@ -154,5 +154,6 @@
   "directionAngle": "กำหนดมุมเฉพาะทิศ",
   "directionSpeed": "กำหนดความเร็วเฉพาะทิศ",
   "hideInDirection": "ซ่อนเลเยอร์นี้ในทิศนี้",
-  "resetDirection": "คืนค่าทิศนี้"
+  "resetDirection": "คืนค่าทิศนี้",
+  "leaveUnsaved": "โปรเจกต์นี้ยังไม่ได้บันทึก ออกโดยไม่บันทึกไหม"
 }

@@ -11,5 +11,9 @@
   "windup": "Wind-up",
   "rise": "Action",
   "freeze": "Freeze",
-  "recover": "Recovery"
+  "recover": "Recovery",
+  "canvasWidth": "W",
+  "canvasHeight": "H",
+  "frameCount": "Frames",
+  "fps": "FPS"
 }

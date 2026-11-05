@@ -15,6 +15,10 @@ export async function launch(profile = freshProfile(), env: Record<string, strin
       : { args: ['.', `--user-data-dir=${profile}`] }),
     env: { ...(process.env as Record<string, string>), ...env },
   });
+  await app.evaluate(({ dialog }) => {
+    // tests close dirty windows; a real message box would block app.close()
+    dialog.showMessageBoxSync = (() => 0) as typeof dialog.showMessageBoxSync;
+  });
   const page: Page = await app.firstWindow();
   return { app, page, profile };
 }

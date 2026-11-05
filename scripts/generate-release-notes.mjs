@@ -13,6 +13,7 @@ console.log(
   renderReleaseNotes({
     version: arg('--version'),
     changelog: readFileSync('CHANGELOG.md', 'utf8'),
+    thaiChangelog: readFileSync('CHANGELOG.th.md', 'utf8'),
     sums: readFileSync(arg('--sums'), 'utf8'),
     signed: false,
     pendingGates,

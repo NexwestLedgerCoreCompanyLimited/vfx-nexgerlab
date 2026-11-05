@@ -1,5 +1,7 @@
 import type { ProjectV1 } from '../../shared/schemas/project';
 import { ExportMetadataSchema, type ExportMetadataV1 } from '../../shared/schemas/export-metadata';
+import type { DirectionCount } from '../../shared/directions';
+import { resolveDirectionProject } from '../directions';
 import { applyActOverrides, getEffect } from '../effect-registry';
 import { actTiming } from '../pixelfx/src/core/index.js';
 import type { SheetLayout } from './spritesheet';
@@ -78,9 +80,11 @@ export function buildExportMetadata(input: {
   layout: SheetLayout;
   image: string;
   includeAct: boolean;
+  directionCount?: DirectionCount;
 }): ExportMetadataV1 {
-  const { project, layout, image, includeAct } = input;
-  const first = project.layers[0];
+  const { project, layout, image, includeAct, directionCount = 1 } = input;
+  // frames are drawn from the resolved project, which adds room to turn in
+  const first = resolveDirectionProject(project, 'S', directionCount).layers[0];
   const pivot: [number, number] = [first?.x ?? 0, first?.y ?? 0];
   const act = includeAct ? actFor(project) : undefined;
   return buildSheetMetadata({

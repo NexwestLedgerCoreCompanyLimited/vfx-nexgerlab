@@ -1,7 +1,7 @@
 {
   "name": "vfx-nexgerlab",
   "productName": "VFX NexgerLab",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An offline pixel art VFX studio for game developers.",
   "license": "BUSL-1.1",
   "private": true,

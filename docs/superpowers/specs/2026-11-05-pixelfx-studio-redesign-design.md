@@ -241,3 +241,7 @@ Moved to v0.2 (*builder call, owner to confirm*): user-authored emitter and shap
 - Three-click export writes a sheet whose pixels match the Quick Look frames.
 - Project files never trigger code loading.
 - `THIRD_PARTY_NOTICES.md` carries every required notice.
+
+## Later scope change, 2026-11-05
+
+The owner added characters, 2D and 3D maps, an MCP stdio server, wider file formats, English as the default, and the MineOffice license. `docs/vfx-nexgerlab-product-spec.md` and `DECISIONS.md` record these. They replace any non-goal above that conflicts.

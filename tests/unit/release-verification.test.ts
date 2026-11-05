@@ -40,8 +40,9 @@ describe('checkRelease', () => {
 });
 
 describe('renderReleaseNotes', () => {
-  it('uses the changelog section and states prerelease status and pending gates', () => {
+  it('uses both changelogs and states unsigned status and pending gates', () => {
     const notes = renderReleaseNotes({
+      thaiChangelog: '## [0.1.0]\n\n### เพิ่มใหม่\n\n- สวัสดี\n',
       version: '0.1.0',
       changelog: good.changelog,
       sums: 'abc  app.dmg',
@@ -51,6 +52,7 @@ describe('renderReleaseNotes', () => {
     expect(notes).toContain('### Added');
     expect(notes).toContain('abc  app.dmg');
     expect(notes).toMatch(/unsigned/i);
+    expect(notes).toContain('สวัสดี');
     expect(notes).toContain('Thai review');
   });
 });

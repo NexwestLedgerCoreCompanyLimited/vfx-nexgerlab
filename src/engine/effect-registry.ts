@@ -79,8 +79,15 @@ const isDefaultRamp = (v: unknown): boolean =>
   Array.isArray(v) &&
   v.every((c) => typeof c === 'number' || (typeof c === 'string' && HEX.test(c)));
 
+const MAX_OPTION_SCALE = 16;
+const MIN_OPTION_LIMIT = 256;
+
 function validValue(value: unknown, fallback: unknown): boolean {
-  if (typeof fallback === 'number') return typeof value === 'number' && Number.isFinite(value);
+  if (typeof fallback === 'number') {
+    // effects allocate from these, so a shared project must not be able to ask for millions
+    const limit = Math.max(Math.abs(fallback) * MAX_OPTION_SCALE, MIN_OPTION_LIMIT);
+    return typeof value === 'number' && Number.isFinite(value) && Math.abs(value) <= limit;
+  }
   if (typeof fallback === 'boolean') return typeof value === 'boolean';
   if (typeof fallback === 'string') {
     if (typeof value !== 'string') return false;

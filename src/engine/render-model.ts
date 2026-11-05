@@ -37,13 +37,15 @@ function cursorFor(
   cache: RenderCache,
   assets: ReadonlyMap<string, AssetFrame[]>,
 ): CacheEntry {
-  const signature = JSON.stringify([layer, fps, stage]);
+  const actor = actorFor(layer, assets);
+  // asset ids are content hashes, so whether the sprite has arrived is all the key needs
+  const signature = JSON.stringify([layer, fps, stage, Boolean(actor)]);
   const key = `${layer.id}:${stage}`;
   let entry = cache.cursors.get(key);
   if (entry?.signature !== signature) {
     entry = { signature };
     try {
-      entry.cursor = createLayerCursor(layer, fps, stage, actorFor(layer, assets));
+      entry.cursor = createLayerCursor(layer, fps, stage, actor);
     } catch (error) {
       entry.error = (error as Error).message;
     }
@@ -172,7 +174,7 @@ export function renderProjectFrame(
   if (partFilter === 'whole') {
     for (const attachment of project.spriteAttachments) {
       const frames = assets.get(attachment.assetId);
-      if (!frames || frameIndex >= attachment.outputToSourceFrames.length) continue;
+      if (!frames) continue;
       const resolved = resolveAttachmentFrame(attachment, frameIndex);
       const sprite = frames[resolved.sourceFrameIndex];
       if (!sprite) continue;

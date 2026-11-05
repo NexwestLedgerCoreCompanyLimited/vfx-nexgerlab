@@ -43,11 +43,13 @@ describe('project service', () => {
     expect(ProjectSchema.safeParse(read(h.path)).success).toBe(true);
   });
 
-  it('refuses to overwrite an existing folder', async () => {
+  it('never writes into an existing folder', async () => {
     const parent = tmp();
     const s = service();
-    await s.createProject({ parentDir: parent, name: 'a' });
-    await expect(s.createProject({ parentDir: parent, name: 'a' })).rejects.toThrow();
+    const first = await s.createProject({ parentDir: parent, name: 'a' });
+    const second = await s.createProject({ parentDir: parent, name: 'a' });
+    expect(second.path).toBe(`${first.path} 2`);
+    expect((await s.openProject(first.path)).project.id).toBe(first.project.id);
   });
 
   it.each([

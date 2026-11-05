@@ -39,13 +39,22 @@ export function checkRelease({ version, packageVersion, changelog, locales }) {
   return problems;
 }
 
-export function renderReleaseNotes({ version, changelog, sums, signed, pendingGates }) {
+export function renderReleaseNotes({
+  version,
+  changelog,
+  thaiChangelog,
+  sums,
+  signed,
+  pendingGates,
+}) {
   const parts = [
     changelogSection(changelog, version)?.split('\n').slice(1).join('\n').trim() ?? '',
   ];
+  const thai = thaiChangelog && changelogSection(thaiChangelog, version);
+  if (thai) parts.push(`## ภาษาไทย\n\n${thai.split('\n').slice(1).join('\n').trim()}`);
   if (!signed) {
     parts.push(
-      '## Installation warning\n\nThis prerelease is unsigned. macOS and Windows will warn you before opening it.',
+      '## Installation warning\n\nThis release is unsigned. macOS and Windows will warn you before opening it.\n\nตัวติดตั้งนี้ยังไม่ได้เซ็นรับรอง macOS และ Windows จะเตือนก่อนเปิด',
     );
   }
   if (pendingGates.length) {

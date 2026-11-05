@@ -11,5 +11,9 @@
   "windup": "เตรียมท่า",
   "rise": "ลงมือ",
   "freeze": "หยุดค้าง",
-  "recover": "ฟื้นตัว"
+  "recover": "ฟื้นตัว",
+  "canvasWidth": "กว้าง",
+  "canvasHeight": "สูง",
+  "frameCount": "เฟรม",
+  "fps": "FPS"
 }

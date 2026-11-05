@@ -253,7 +253,7 @@ Each entry states the user-visible system added/changed, links the PR/issue, and
 - Pull requests: format/lint, typecheck, unit/schema/i18n tests, build, critical Electron E2E, dependency and secret scanning.
 - Matrix build on Windows/macOS/Linux runners; actions pinned by commit SHA; least-privilege token permissions.
 - Tag pipeline verifies changelog/version, reruns release tests, builds installers, publishes notes and artifacts.
-- Initial unsigned artifacts must be marked prerelease with installation warnings. A stable release requires an explicit signing/notarization decision; purchasing certificates or Apple Developer membership is not assumed.
+- Unsigned artifacts must carry installation warnings. A stable release requires an explicit signing/notarization decision; purchasing certificates or Apple Developer membership is not assumed.
 - In-app update installation is deferred until signed update metadata and rollback behavior are tested.
 
 ## 11. Verification and acceptance gates
@@ -296,7 +296,7 @@ Each entry states the user-visible system added/changed, links the PR/issue, and
 | Effect regressions | Golden hashes plus real preview/export inspection |
 | Live library loads the CPU | Visible-only tiles, 15 fps stepping, active tile cap, measured in the packaged app |
 | Thai/community translation drift | Key/placeholder CI, glossary, reviewer gate |
-| Unsigned installers | Prerelease labels until signing/notarization is funded and tested |
+| Unsigned installers | Warnings in the notes and README until signing/notarization is funded and tested |
 | Co-author not linked to Claude profile | Honest trailer only; never invent a GitHub-linked email |
 
 ## 13. Execution assumptions
@@ -305,3 +305,7 @@ Each entry states the user-visible system added/changed, links the PR/issue, and
 - The active GitHub account is the intended repository owner.
 - The owner authorized implementation, commits, public repository creation, push, issue templates, and a GitHub release in the execution request; no purchase or signing enrollment is authorized.
 - PixelLab facts describe public capability research reviewed on 2026-10-30; its service is not a runtime dependency and no further provider implementation is planned.
+
+## 2026-11-05 scope note
+
+These v0.1 items are cut to a later version, and are listed as known issues: keyframe editing, pivot and crop or pad controls, front and back timeline lanes, UI scale, shortcut remapping, Save As, the Home My Effects view, and Composer input on Home. Automatic updates are also not built, because a signature is required on macOS and the app promises no network use.

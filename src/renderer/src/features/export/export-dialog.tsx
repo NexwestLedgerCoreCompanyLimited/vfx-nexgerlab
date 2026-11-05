@@ -7,6 +7,7 @@ import { generateNormalMap } from '../../../../engine/normal-map';
 import { usesStockBody } from '../../../../engine/project-factory';
 import { paintFrame } from '../../engine/canvas-renderer';
 import { renderClient } from '../../engine/client';
+import { RenderFailedError } from '../../engine/render-client';
 import { useEditor } from '../editor/use-editor-store';
 import { NormalControls } from '../normals/normal-preview';
 import {
@@ -17,6 +18,7 @@ import {
   type ExportFormat,
   type ExportSettings,
 } from './export-service';
+import { exportTooLarge } from './export-limits';
 
 const FORMATS: ExportFormat[] = [
   'spritesheet-json',
@@ -36,7 +38,7 @@ const PREVIEW_DELAY_MS = 250;
 export function ExportScreen() {
   const { t } = useTranslation('export');
   const { t: te } = useTranslation('editor');
-  const { project, go, handle } = useEditor();
+  const { project, go, returnRoute, assetsReady, missingAssets } = useEditor();
   const [settings, setSettings] = useState<ExportSettings>({
     format: 'spritesheet-json',
     directions: project?.directions?.count ?? 1,
@@ -64,6 +66,14 @@ export function ExportScreen() {
       }),
     [size],
   );
+  const tooLarge =
+    !!size &&
+    exportTooLarge({
+      width: size.width,
+      height: size.height,
+      frames: size.frames,
+      count: size.order.length,
+    });
   const json = useMemo(() => {
     if (!project || !layout) return '';
     const data = buildExportMetadata({
@@ -71,6 +81,7 @@ export function ExportScreen() {
       layout,
       image: `${settings.name}.png`,
       includeAct: settings.includeAct,
+      directionCount: settings.directions,
     });
     const { schemaVersion: _v, source: _s, layers: _l, ...shown } = data.meta.vfxlab;
     return JSON.stringify(
@@ -82,25 +93,30 @@ export function ExportScreen() {
       null,
       2,
     );
-  }, [project, layout, settings.name, settings.includeAct]);
+  }, [project, layout, settings.name, settings.includeAct, settings.directions]);
 
   useEffect(() => {
-    if (!project || !size || !layout) return;
+    if (!project || !size || !layout || tooLarge) return;
     const stop = new AbortController();
     const timer = setTimeout(async () => {
       const frames = [];
-      for (const direction of size.order) {
-        const view = resolveDirectionProject(project, direction, settings.directions);
-        frames.push(
-          ...(await renderDirection(
-            renderClient(),
-            view,
-            size.frames,
-            { partFilter: 'whole', includeStage: false },
-            stop.signal,
-            () => {},
-          )),
-        );
+      try {
+        for (const direction of size.order) {
+          const view = resolveDirectionProject(project, direction, settings.directions);
+          frames.push(
+            ...(await renderDirection(
+              renderClient(),
+              view,
+              size.frames,
+              { partFilter: 'whole', includeStage: false },
+              stop.signal,
+              () => {},
+            )),
+          );
+        }
+      } catch (error) {
+        setMessage({ kind: 'error', text: t('layerFailed', { reason: (error as Error).message }) });
+        return;
       }
       if (stop.signal.aborted || !preview.current) return;
       const shown = settings.normal
@@ -112,7 +128,16 @@ export function ExportScreen() {
       stop.abort();
       clearTimeout(timer);
     };
-  }, [project, size, layout, settings.directions, settings.normal, settings.normalStrength]);
+  }, [
+    project,
+    size,
+    layout,
+    tooLarge,
+    settings.directions,
+    settings.normal,
+    settings.normalStrength,
+    t,
+  ]);
 
   if (!project || !size || !layout) return null;
 
@@ -134,7 +159,12 @@ export function ExportScreen() {
     } catch (error) {
       setMessage({
         kind: 'error',
-        text: error instanceof ExportTooLargeError ? t('tooLarge') : t('failed'),
+        text:
+          error instanceof ExportTooLargeError
+            ? t('tooLarge')
+            : error instanceof RenderFailedError
+              ? t('layerFailed', { reason: error.message })
+              : t('failed'),
       });
     } finally {
       setProgress(undefined);
@@ -144,7 +174,7 @@ export function ExportScreen() {
   return (
     <div className="screen">
       <header className="bar">
-        <button className="btn" type="button" onClick={() => go(handle ? 'studio' : 'quick-look')}>
+        <button className="btn" type="button" onClick={() => go(returnRoute)}>
           ‹ {t('backToEdit')}
         </button>
         <h1 className="bar-title">{t('title', { name: project.name })}</h1>
@@ -244,6 +274,12 @@ export function ExportScreen() {
             value={settings.name}
             onChange={(e) => change({ name: e.target.value })}
           />
+          {!assetsReady && <p className="muted small">{t('assetsLoading')}</p>}
+          {missingAssets.length > 0 && (
+            <p className="warn small" role="alert">
+              {t('missingAssets', { count: missingAssets.length })}
+            </p>
+          )}
           {message && (
             <p className={message.kind === 'ok' ? 'tag ok' : 'warn small'} role="status">
               {message.text}
@@ -257,7 +293,12 @@ export function ExportScreen() {
               </button>
             </>
           ) : (
-            <button className="btn pri big" type="button" onClick={() => void start()}>
+            <button
+              className="btn pri big"
+              type="button"
+              disabled={!assetsReady || missingAssets.length > 0}
+              onClick={() => void start()}
+            >
               {t('run')}
             </button>
           )}

@@ -117,6 +117,7 @@ async function* buildFiles(
     layout,
     image: `${name}.png`,
     includeAct: settings.includeAct,
+    directionCount: directions,
   });
   const json = new TextEncoder().encode(JSON.stringify(metadata, null, 1));
   const view = (direction: Direction) => resolveDirectionProject(project, direction, directions);

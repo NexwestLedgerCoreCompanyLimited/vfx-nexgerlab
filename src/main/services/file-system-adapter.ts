@@ -1,9 +1,10 @@
 import { constants } from 'node:fs';
-import { access, copyFile, mkdir, open, readFile, rename, rm } from 'node:fs/promises';
+import { access, copyFile, mkdir, open, readFile, rename, rm, stat } from 'node:fs/promises';
 
 /** The file steps a save depends on, so tests can fail each one without real power loss. */
 export interface FileSystemAdapter {
   read(path: string): Promise<string>;
+  size(path: string): Promise<number>;
   write(path: string, data: string): Promise<void>;
   flush(path: string): Promise<void>;
   rename(from: string, to: string): Promise<void>;
@@ -15,6 +16,7 @@ export interface FileSystemAdapter {
 
 export const nodeFileSystem: FileSystemAdapter = {
   read: (path) => readFile(path, 'utf8'),
+  size: async (path) => (await stat(path)).size,
   write: async (path, data) => {
     const file = await open(path, 'w');
     try {
