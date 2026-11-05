@@ -5,6 +5,7 @@ directories:
   buildResources: assets/icons
 files:
   - out/**
+  - '!out/renderer/e2e*'
   - package.json
 extraResources:
   - from: THIRD_PARTY_NOTICES.md

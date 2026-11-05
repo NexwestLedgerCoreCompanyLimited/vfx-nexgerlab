@@ -22,6 +22,10 @@ export default defineConfig({
   renderer: {
     root: 'src/renderer',
     plugins: [react(), cspMeta()],
-    build: { outDir: 'out/renderer' },
+    build: {
+      outDir: 'out/renderer',
+      rollupOptions: { input: { index: 'src/renderer/index.html', e2e: 'src/renderer/e2e.html' } },
+    },
+    worker: { format: 'es' },
   },
 });

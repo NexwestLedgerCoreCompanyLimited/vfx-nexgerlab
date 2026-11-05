@@ -15,3 +15,17 @@ export async function launch(profile = freshProfile(), env: Record<string, strin
   const page: Page = await app.firstWindow();
   return { app, page, profile };
 }
+
+/** Opens the render test bench, which reaches the real worker from a real Electron window. */
+export async function bench() {
+  const { app, page } = await launch();
+  const url = await app.evaluate(({ app: a }) => `file://${a.getAppPath()}/out/renderer/e2e.html`);
+  await page.goto(url);
+  await page.waitForFunction(() => 'bench' in window);
+  return { app, page };
+}
+
+/** page.evaluate without Playwright's deep argument types, which do not terminate on recursive JSON. */
+export function run<T>(page: Page, fn: (arg: never) => T | Promise<T>, arg: unknown): Promise<T> {
+  return page.evaluate(fn as never, arg as never) as Promise<T>;
+}
