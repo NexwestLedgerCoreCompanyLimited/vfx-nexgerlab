@@ -1,0 +1,109 @@
+import { create } from 'zustand';
+import type { EditorCommand } from '../../../../engine/commands';
+import { createHistory, execute, redo, undo, type History } from '../../../../engine/history';
+import { createProjectFromEffect } from '../../../../engine/project-factory';
+import type { ProjectHandle } from '../../../../shared/contracts/ipc';
+import type { ProjectV1 } from '../../../../shared/schemas/project';
+
+export type Route = 'home' | 'quick-look' | 'studio' | 'export';
+export type Playback = 'stopped' | 'playing';
+
+interface EditorState {
+  route: Route;
+  project?: ProjectV1 | undefined;
+  handle?: ProjectHandle | undefined;
+  history?: History | undefined;
+  selectedLayerId?: string | undefined;
+  currentFrame: number;
+  playback: Playback;
+  zoom: number;
+  dirty: boolean;
+  renderRevision: number;
+  reset(): void;
+  go(route: Route): void;
+  openEffect(id: string, name: string, language: 'en' | 'th'): void;
+  openHandle(handle: ProjectHandle): void;
+  setHandle(handle: ProjectHandle): void;
+  markSaved(): void;
+  dispatch(command: EditorCommand): void;
+  replaceProject(project: ProjectV1): void;
+  undo(): void;
+  redo(): void;
+  setFrame(frame: number): void;
+  select(layerId: string | undefined): void;
+  setPlayback(playback: Playback): void;
+  setZoom(zoom: number): void;
+}
+
+const blank = {
+  route: 'home' as Route,
+  project: undefined,
+  handle: undefined,
+  history: undefined,
+  selectedLayerId: undefined,
+  currentFrame: 0,
+  playback: 'playing' as Playback,
+  zoom: 2,
+  dirty: false,
+  renderRevision: 0,
+};
+
+export const useEditor = create<EditorState>((set, get) => {
+  const apply = (project: ProjectV1, dirty = true) => {
+    const { selectedLayerId, currentFrame, renderRevision } = get();
+    set({
+      project,
+      dirty,
+      renderRevision: renderRevision + 1,
+      currentFrame: Math.min(currentFrame, project.timeline.frames - 1),
+      selectedLayerId: project.layers.some((l) => l.id === selectedLayerId)
+        ? selectedLayerId
+        : project.layers[0]?.id,
+    });
+  };
+  const load = (project: ProjectV1, route: Route, handle?: ProjectHandle) =>
+    set({
+      project,
+      handle,
+      route,
+      history: createHistory(project),
+      selectedLayerId: project.layers[0]?.id,
+      currentFrame: 0,
+      playback: 'playing',
+      dirty: false,
+    });
+
+  return {
+    ...blank,
+    reset: () => set(blank),
+    go: (route) => set({ route, currentFrame: 0 }),
+    openEffect: (id, name, language) =>
+      load(createProjectFromEffect(id, { name, language }), 'quick-look'),
+    openHandle: (handle) => load(handle.project, 'studio', handle),
+    setHandle: (handle) => set({ handle }),
+    markSaved: () => set({ dirty: false }),
+    dispatch: (command) => {
+      const { history } = get();
+      if (history) apply(execute(history, command));
+    },
+    replaceProject: (project) => {
+      const { history } = get();
+      if (history) apply(execute(history, { type: 'replace', project }));
+    },
+    undo: () => {
+      const { history } = get();
+      if (history) apply(undo(history));
+    },
+    redo: () => {
+      const { history } = get();
+      if (history) apply(redo(history));
+    },
+    setFrame: (frame) => {
+      const { project } = get();
+      if (project) set({ currentFrame: Math.max(0, Math.min(project.timeline.frames - 1, frame)) });
+    },
+    select: (selectedLayerId) => set({ selectedLayerId }),
+    setPlayback: (playback) => set({ playback }),
+    setZoom: (zoom) => set({ zoom }),
+  };
+});
