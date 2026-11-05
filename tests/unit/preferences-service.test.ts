@@ -46,3 +46,14 @@ describe('preferences service', () => {
     });
   });
 });
+
+it('keeps both changes when they land at the same moment', async () => {
+  const d = dir();
+  const s = createPreferencesService(d);
+  await Promise.all([s.markSplashSeen(), s.setLanguage('th')]);
+  expect(await createPreferencesService(d).get()).toMatchObject({
+    language: 'th',
+    hasChosenLanguage: true,
+    hasSeenSplash: true,
+  });
+});

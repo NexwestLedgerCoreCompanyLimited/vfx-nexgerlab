@@ -16,7 +16,7 @@ export function blendInto(
   mode: Blend,
   opacity: number,
 ): void {
-  const mix = MIX[mode];
+  const mix = Object.hasOwn(MIX, mode) ? MIX[mode] : MIX.normal;
   for (let i = 0; i < dst.length; i += 4) {
     const as = (src[i + 3]! / 255) * opacity;
     if (as === 0) continue;

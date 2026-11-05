@@ -11,6 +11,7 @@ import {
 export function createPreferencesService(dir: string) {
   const file = join(dir, 'preferences.json');
   let cached: Preferences | undefined;
+  let queue: Promise<unknown> = Promise.resolve();
 
   async function get(): Promise<Preferences> {
     if (cached) return cached;
@@ -38,10 +39,16 @@ export function createPreferencesService(dir: string) {
     return next;
   }
 
+  // the splash and the language chooser can write together, and neither may lose the other's change
+  function update(patch: Partial<Preferences>): Promise<Preferences> {
+    const next = queue.then(async () => save({ ...(await get()), ...patch }));
+    queue = next.catch(() => undefined);
+    return next;
+  }
+
   return {
     get,
-    setLanguage: async (language: Language) =>
-      save({ ...(await get()), language, hasChosenLanguage: true }),
-    markSplashSeen: async () => save({ ...(await get()), hasSeenSplash: true }),
+    setLanguage: (language: Language) => update({ language, hasChosenLanguage: true }),
+    markSplashSeen: () => update({ hasSeenSplash: true }),
   };
 }

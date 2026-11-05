@@ -63,6 +63,7 @@ test('language choice persists across launches', async () => {
   const first = await launch();
   await first.page.locator('canvas').click();
   await first.page.getByRole('button', { name: 'ไทย', exact: true }).click();
+  await first.page.locator('.home').waitFor();
   await first.app.close();
   const second = await launch(first.profile);
   await second.page.locator('canvas').click();
