@@ -1,11 +1,14 @@
 declare module 'gifenc' {
+  export interface FrameOptions {
+    palette: number[][];
+    delay?: number;
+    repeat?: number;
+    transparent?: boolean;
+    transparentIndex?: number;
+    dispose?: number;
+  }
   export function GIFEncoder(): {
-    writeFrame(
-      index: Uint8Array,
-      w: number,
-      h: number,
-      o: { palette: number[][]; delay?: number },
-    ): void;
+    writeFrame(index: Uint8Array, w: number, h: number, o: FrameOptions): void;
     finish(): void;
     bytes(): Uint8Array;
   };

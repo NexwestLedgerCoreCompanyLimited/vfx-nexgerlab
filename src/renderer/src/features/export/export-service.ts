@@ -1,20 +1,34 @@
 import { resolveDirectionProject } from '../../../../engine/directions';
+import { encodeApng } from '../../../../engine/exporters/apng';
+import { buildGamePack, type GamePackEntry } from '../../../../engine/exporters/game-pack';
+import { encodeGif } from '../../../../engine/exporters/gif';
 import { buildExportMetadata } from '../../../../engine/exporters/metadata';
 import { encodePng } from '../../../../engine/exporters/png';
-import { calculateSheetLayout, packSheet } from '../../../../engine/exporters/spritesheet';
+import {
+  calculateSheetLayout,
+  packSheet,
+  type SheetLayout,
+} from '../../../../engine/exporters/spritesheet';
+import { generateNormalMap } from '../../../../engine/normal-map';
 import { exportFrameCount } from '../../../../engine/project-factory';
 import type { FrameRGBA, RenderOptions } from '../../../../engine/render-types';
-import { DIRECTION_ORDER, type DirectionCount } from '../../../../shared/directions';
+import {
+  DIRECTION_ORDER,
+  type Direction,
+  type DirectionCount,
+} from '../../../../shared/directions';
 import type { ProjectV1 } from '../../../../shared/schemas/project';
 import type { RenderClient } from '../../engine/render-client';
 
-export type ExportFormat = 'spritesheet-json' | 'png-sequence';
+export type ExportFormat = 'spritesheet-json' | 'png-sequence' | 'gif' | 'apng' | 'game-pack';
 
 export interface ExportSettings {
   format: ExportFormat;
   directions: DirectionCount;
   split: boolean;
   includeAct: boolean;
+  normal: boolean;
+  normalStrength: number;
   name: string;
 }
 
@@ -29,7 +43,7 @@ export interface ExportFile {
   bytes: Uint8Array;
 }
 
-export function exportSize(project: ProjectV1, settings: ExportSettings) {
+export function exportSize(project: ProjectV1, settings: Pick<ExportSettings, 'directions'>) {
   const order = DIRECTION_ORDER[settings.directions];
   const frames = exportFrameCount(project);
   const canvas = resolveDirectionProject(project, order[0], settings.directions).canvas;
@@ -60,13 +74,10 @@ async function* buildFiles(
   tick: () => void,
 ): AsyncGenerator<ExportFile> {
   const { order, frames, width, height } = exportSize(project, settings);
-  const { name, directions } = settings;
-  const layout = calculateSheetLayout({
-    frameWidth: width,
-    frameHeight: height,
-    frames,
-    directions: order,
-  });
+  const { name, directions, format } = settings;
+  const layoutFor = (dirs: readonly Direction[]) =>
+    calculateSheetLayout({ frameWidth: width, frameHeight: height, frames, directions: dirs });
+  const layout = layoutFor(order);
   if (
     layout.width > MAX_SHEET_SIDE ||
     layout.height > MAX_SHEET_SIDE ||
@@ -74,18 +85,7 @@ async function* buildFiles(
   ) {
     throw new ExportTooLargeError();
   }
-  const all: FrameRGBA[] = [];
-  for (const direction of order) {
-    const view = resolveDirectionProject(project, direction, directions);
-    const rendered = await renderDirection(client, view, frames, WHOLE, signal, tick);
-    if (signal.aborted) return;
-    if (settings.format === 'png-sequence') {
-      for (let i = 0; i < rendered.length; i++) {
-        yield { path: `${name}/${direction}/${padded(i)}.png`, bytes: encodePng(rendered[i]!) };
-      }
-    }
-    all.push(...rendered);
-  }
+  const durations = Array.from({ length: frames }, () => Math.round(1000 / project.timeline.fps));
   const metadata = buildExportMetadata({
     project,
     layout,
@@ -93,32 +93,109 @@ async function* buildFiles(
     includeAct: settings.includeAct,
   });
   const json = new TextEncoder().encode(JSON.stringify(metadata, null, 1));
-  if (settings.format === 'png-sequence') {
+  const view = (direction: Direction) => resolveDirectionProject(project, direction, directions);
+  const render = (direction: Direction, options: RenderOptions = WHOLE) =>
+    renderDirection(client, view(direction), frames, options, signal, tick);
+  const normals = (list: FrameRGBA[]) =>
+    list.map((f) => generateNormalMap(f, { strength: settings.normalStrength }));
+  const sheet = (l: SheetLayout, list: FrameRGBA[]) => encodePng(packSheet(l, list));
+
+  if (format === 'gif' || format === 'apng') {
+    for (const direction of order) {
+      const list = await render(direction);
+      if (signal.aborted) return;
+      const suffix = order.length > 1 ? `-${direction}` : '';
+      yield format === 'gif'
+        ? { path: `${name}${suffix}.gif`, bytes: encodeGif(list, durations, project.timeline.loop) }
+        : {
+            path: `${name}${suffix}.png`,
+            bytes: encodeApng(list, durations, project.timeline.loop),
+          };
+    }
+    return;
+  }
+
+  if (format === 'png-sequence') {
+    for (const direction of order) {
+      const list = await render(direction);
+      if (signal.aborted) return;
+      for (let i = 0; i < list.length; i++) {
+        yield { path: `${name}/${direction}/${padded(i)}.png`, bytes: encodePng(list[i]!) };
+        if (settings.normal) {
+          yield {
+            path: `${name}/normals/${direction}/${padded(i)}.png`,
+            bytes: encodePng(generateNormalMap(list[i]!, { strength: settings.normalStrength })),
+          };
+        }
+      }
+    }
     yield { path: `${name}/${name}.json`, bytes: json };
     return;
   }
-  yield { path: `${name}.png`, bytes: encodePng(packSheet(layout, all)) };
-  yield { path: `${name}.json`, bytes: json };
-  if (settings.split) {
-    for (const part of ['behind', 'front'] as const) {
-      const options: RenderOptions = { partFilter: part, includeStage: false };
-      const parts: FrameRGBA[] = [];
-      for (const direction of order) {
-        parts.push(
-          ...(await renderDirection(
-            client,
-            resolveDirectionProject(project, direction, directions),
-            frames,
-            options,
-            signal,
-            tick,
-          )),
-        );
+
+  const collect = async (options: RenderOptions) => {
+    const all: FrameRGBA[] = [];
+    for (const direction of order) all.push(...(await render(direction, options)));
+    return all;
+  };
+
+  if (format === 'spritesheet-json') {
+    const whole = await collect(WHOLE);
+    if (signal.aborted) return;
+    yield { path: `${name}.png`, bytes: sheet(layout, whole) };
+    yield { path: `${name}.json`, bytes: json };
+    if (settings.normal) yield { path: `${name}-normal.png`, bytes: sheet(layout, normals(whole)) };
+    if (settings.split) {
+      for (const part of ['behind', 'front'] as const) {
+        const list = await collect({ partFilter: part, includeStage: false });
+        if (signal.aborted) return;
+        yield { path: `${name}-${part}.png`, bytes: sheet(layout, list) };
       }
-      if (signal.aborted) return;
-      yield { path: `${name}-${part}.png`, bytes: encodePng(packSheet(layout, parts)) };
     }
+    return;
   }
+
+  const entries: GamePackEntry[] = [];
+  const add = (file: Omit<GamePackEntry, 'bytes'>, l: SheetLayout, list: FrameRGBA[]) => {
+    entries.push({ ...file, bytes: sheet(l, list) });
+    if (settings.normal) {
+      entries.push({
+        path: `normals/${file.path}`,
+        kind: 'normal',
+        bytes: sheet(l, normals(list)),
+      });
+    }
+  };
+  add({ path: 'whole/sheet.png', kind: 'whole' }, layout, await collect(WHOLE));
+  add(
+    { path: 'behind-sprite/sheet.png', kind: 'behind' },
+    layout,
+    await collect({ partFilter: 'behind', includeStage: false }),
+  );
+  add(
+    { path: 'in-front-sprite/sheet.png', kind: 'front' },
+    layout,
+    await collect({ partFilter: 'front', includeStage: false }),
+  );
+  for (const layer of project.layers) {
+    const list = await collect({ partFilter: { layerId: layer.id }, includeStage: false });
+    add({ path: `parts/${layer.id}/sheet.png`, kind: 'part', part: layer.id }, layout, list);
+  }
+  for (const direction of order) {
+    const list = await render(direction);
+    add(
+      { path: `directions/${direction}/sheet.png`, kind: 'direction', direction },
+      layoutFor([direction]),
+      list,
+    );
+  }
+  if (signal.aborted) return;
+  yield { path: `${name}.zip`, bytes: buildGamePack({ name, metadata, entries }) };
+}
+
+function passes(project: ProjectV1, settings: ExportSettings): number {
+  if (settings.format === 'game-pack') return project.layers.length + 4;
+  return settings.format === 'spritesheet-json' && settings.split ? 3 : 1;
 }
 
 export type ExportResult = { status: 'done'; files: string[] } | { status: 'cancelled' };
@@ -134,8 +211,7 @@ export async function runExport(
   const session = await window.vfxlab.exportBegin();
   if (!session) return { status: 'cancelled' };
   const { order, frames } = exportSize(project, settings);
-  const total =
-    order.length * frames * (settings.split && settings.format === 'spritesheet-json' ? 3 : 1);
+  const total = order.length * frames * passes(project, settings);
   let done = 0;
   try {
     const name = await window.vfxlab.exportName(settings.name);

@@ -22,6 +22,6 @@
     "src/main/security.ts",
     "tests/unit",
     "tests/helpers/images.ts",
-    "tests/helpers/gifenc.d.ts"
+    "tests/helpers/upng-js.d.ts"
   ]
 }

@@ -11,6 +11,18 @@
     "png-sequence": {
       "name": "PNG sequence",
       "body": "One file per frame"
+    },
+    "gif": {
+      "name": "GIF",
+      "body": "Easy to share. 256 colors, hard transparency"
+    },
+    "apng": {
+      "name": "APNG",
+      "body": "Animated, with full transparency"
+    },
+    "game-pack": {
+      "name": "Game pack ZIP",
+      "body": "Parts, directions, normal maps, and a manifest"
     }
   },
   "directions": "Directions",
@@ -27,5 +39,7 @@
   "done": "Exported {{count}} files",
   "overwrite": "{{count}} files already exist. Replace them?",
   "tooLarge": "This export is too large. Use fewer frames or directions.",
-  "failed": "The export failed, so nothing was written."
+  "failed": "The export failed, so nothing was written.",
+  "normal": "Normal map",
+  "normalStrength": "Normal strength"
 }

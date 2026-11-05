@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { calculateSheetLayout, packSheet } from '../../../../engine/exporters/spritesheet';
 import { buildExportMetadata } from '../../../../engine/exporters/metadata';
 import { resolveDirectionProject } from '../../../../engine/directions';
+import { generateNormalMap } from '../../../../engine/normal-map';
 import { paintFrame } from '../../engine/canvas-renderer';
 import { renderClient } from '../../engine/client';
 import { useEditor } from '../editor/use-editor-store';
+import { NormalControls } from '../normals/normal-preview';
 import {
   ExportTooLargeError,
   exportSize,
@@ -15,7 +17,7 @@ import {
   type ExportSettings,
 } from './export-service';
 
-const FORMATS: ExportFormat[] = ['spritesheet-json', 'png-sequence'];
+const FORMATS: ExportFormat[] = ['spritesheet-json', 'gif', 'apng', 'png-sequence', 'game-pack'];
 const COUNTS = [1, 4, 8, 16] as const;
 const PREVIEW_DELAY_MS = 250;
 
@@ -28,6 +30,8 @@ export function ExportScreen() {
     directions: 1,
     split: false,
     includeAct: true,
+    normal: false,
+    normalStrength: 2,
     name: project?.name ?? 'effect',
   });
   const [progress, setProgress] = useState<{ done: number; total: number }>();
@@ -86,14 +90,17 @@ export function ExportScreen() {
           )),
         );
       }
-      if (!stop.signal.aborted && preview.current)
-        paintFrame(preview.current, packSheet(layout, frames));
+      if (stop.signal.aborted || !preview.current) return;
+      const shown = settings.normal
+        ? frames.map((f) => generateNormalMap(f, { strength: settings.normalStrength }))
+        : frames;
+      paintFrame(preview.current, packSheet(layout, shown));
     }, PREVIEW_DELAY_MS);
     return () => {
       stop.abort();
       clearTimeout(timer);
     };
-  }, [project, size, layout, settings.directions]);
+  }, [project, size, layout, settings.directions, settings.normal, settings.normalStrength]);
 
   if (!project || !size || !layout) return null;
 
@@ -185,6 +192,12 @@ export function ExportScreen() {
                 {t('act')}
               </button>
             </div>
+            <NormalControls
+              enabled={settings.normal}
+              strength={settings.normalStrength}
+              onToggle={() => change({ normal: !settings.normal })}
+              onStrength={(normalStrength) => change({ normalStrength })}
+            />
           </div>
         </aside>
         <section className="export-mid">
