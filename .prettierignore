@@ -1,0 +1,14 @@
+out
+release
+coverage
+package-lock.json
+docs/design
+docs/superpowers
+docs/research
+docs/vfx-nexgerlab-product-spec.md
+src/engine/pixelfx
+tests/fixtures
+.claude
+.superpowers
+test-results
+playwright-report

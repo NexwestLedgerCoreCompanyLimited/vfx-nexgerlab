@@ -1,0 +1,16 @@
+{
+  "brand": "VFX NexgerLab",
+  "home": {
+    "title": "What effect are you making today?",
+    "new": "New",
+    "importSprite": "Import sprite",
+    "offline": "Works offline"
+  },
+  "language": { "label": "Language", "choose": "Choose your language" },
+  "splash": {
+    "label": "Opening animation. Press any key to skip.",
+    "engine": "Preparing the render engine",
+    "library": "Opening the effect library",
+    "ready": "Ready. Everything runs on your computer"
+  }
+}

@@ -1,0 +1,26 @@
+appId: com.nexwestledgercore.vfxnexgerlab
+productName: VFX NexgerLab
+directories:
+  output: release
+  buildResources: assets/icons
+files:
+  - out/**
+  - package.json
+extraResources:
+  - from: THIRD_PARTY_NOTICES.md
+    to: THIRD_PARTY_NOTICES.md
+  - from: LICENSE
+    to: LICENSE
+artifactName: VFX-NexgerLab-${os}-${arch}.${ext}
+mac:
+  target: [dmg]
+  icon: assets/icons/icon-1024.png
+  category: public.app-category.developer-tools
+win:
+  target: [nsis]
+  icon: assets/icons/icon-256.png
+linux:
+  target: [AppImage]
+  icon: assets/icons
+  category: Graphics
+publish: null
