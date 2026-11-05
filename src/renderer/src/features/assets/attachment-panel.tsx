@@ -1,3 +1,4 @@
+import { supportsCustomActor } from '../../../../engine/actor-adapter';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,17 +7,89 @@ import {
   setFrameAnchor,
 } from '../../../../engine/sprite-attachment';
 import type { AssetFrame, StripLayout } from '../../../../shared/models/asset';
-import type { AssetRef, SpriteAttachment } from '../../../../shared/schemas/project';
+import type { AssetRef, SpriteAttachment, SpriteFx } from '../../../../shared/schemas/project';
 import { newId } from '../../../../shared/utils/id';
 import { renderClient } from '../../engine/client';
 import { useEditor } from '../editor/use-editor-store';
 import { ImportDialog } from './import-dialog';
 
+const FX_KINDS = ['aura', 'glow', 'light', 'recolor'] as const;
+const FX_DEFAULTS: Record<SpriteFx['kind'], Pick<SpriteFx, 'color' | 'placement'>> = {
+  aura: { color: '#32e6f2', placement: 'behind-sprite' },
+  glow: { color: '#9b6cff', placement: 'behind-sprite' },
+  light: { color: '#ffd84a', placement: 'in-front-sprite' },
+  recolor: { color: '#58b4ec', placement: 'in-front-sprite' },
+};
 const CODES = ['missing', 'too-large', 'unsupported', 'corrupt', 'bad-strip', 'in-use'];
+
+function SpriteFxControls({
+  attachment,
+  onChange,
+}: {
+  attachment: SpriteAttachment;
+  onChange(a: SpriteAttachment): void;
+}) {
+  const { t } = useTranslation('editor');
+  const list = attachment.fx ?? [];
+  const set = (fx: SpriteFx[]) => onChange({ ...attachment, fx });
+  return (
+    <div className="stack tight">
+      <span className="sect">{t('spriteFx')}</span>
+      <div className="row wrap">
+        {FX_KINDS.map((kind) => (
+          <button
+            key={kind}
+            className="chip"
+            type="button"
+            aria-pressed="false"
+            onClick={() =>
+              set([...list, { id: newId(), kind, strength: 0.8, ...FX_DEFAULTS[kind] }])
+            }
+          >
+            {t(`addFx.${kind}`)}
+          </button>
+        ))}
+      </div>
+      {list.map((fx) => {
+        const name = t(`fxNames.${fx.kind}`);
+        const patch = (p: Partial<SpriteFx>) =>
+          set(list.map((o) => (o.id === fx.id ? { ...o, ...p } : o)));
+        return (
+          <div className="row" key={fx.id}>
+            <span className="small">{name}</span>
+            <input
+              type="color"
+              aria-label={`${t('fxColor')}: ${name}`}
+              value={fx.color}
+              onChange={(e) => patch({ color: e.target.value })}
+            />
+            <input
+              type="range"
+              aria-label={`${t('fxStrength')}: ${name}`}
+              min={0}
+              max={1}
+              step={0.05}
+              value={fx.strength}
+              onChange={(e) => patch({ strength: Number(e.target.value) })}
+            />
+            <button
+              className="ibtn"
+              type="button"
+              aria-label={`${t('removeFx')}: ${name}`}
+              onClick={() => set(list.filter((o) => o.id !== fx.id))}
+            >
+              ×
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export function AttachmentPanel({ onSave }: { onSave(): Promise<void> }) {
   const { t } = useTranslation('editor');
-  const { project, handle, currentFrame, replaceProject } = useEditor();
+  const { project, handle, currentFrame, replaceProject, selectedLayerId } = useEditor();
   const [asking, setAsking] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -36,6 +109,7 @@ export function AttachmentPanel({ onSave }: { onSave(): Promise<void> }) {
   }, [handle?.path, assetsKey]);
 
   if (!project) return null;
+  const layer = project.layers.find((l) => l.id === selectedLayerId);
   const fail = (e: unknown) => {
     const code = CODES.find((c) => String(e).includes(c));
     setError(code ? t(`importError.${code}`) : String(e));
@@ -147,6 +221,29 @@ export function AttachmentPanel({ onSave }: { onSave(): Promise<void> }) {
                     </div>
                   ))}
                 </div>
+                <SpriteFxControls attachment={attachment} onChange={update} />
+                {layer && (
+                  <button
+                    className="btn"
+                    type="button"
+                    disabled={!supportsCustomActor(layer.effectId)}
+                    aria-pressed={layer.actorAssetId === ref.id}
+                    onClick={() => {
+                      const { actorAssetId: _old, ...rest } = layer;
+                      const next =
+                        layer.actorAssetId === ref.id ? rest : { ...rest, actorAssetId: ref.id };
+                      replaceProject({
+                        ...project,
+                        layers: project.layers.map((l) => (l.id === layer.id ? next : l)),
+                      });
+                    }}
+                  >
+                    {layer.actorAssetId === ref.id ? t('usingCharacter') : t('useAsCharacter')}
+                  </button>
+                )}
+                {layer && !supportsCustomActor(layer.effectId) && (
+                  <p className="muted small">{t('noActor')}</p>
+                )}
                 <button
                   className="btn"
                   type="button"

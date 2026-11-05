@@ -1,4 +1,5 @@
 import type { EffectLayer } from '../shared/schemas/project';
+import type { Actor } from './actor-adapter';
 import { applyActOverrides, getEffect, validateEffectOptions } from './effect-registry';
 import { createAct, createFx } from './pixelfx/src/core/index.js';
 import { sampleNumberTrack } from './timeline';
@@ -22,11 +23,16 @@ interface Live {
 }
 
 /** One effect layer on the project's frame grid. Stepping is the only way time moves, so any frame can be replayed. */
-export function createLayerCursor(layer: EffectLayer, fps: number, stage: boolean): LayerCursor {
+export function createLayerCursor(
+  layer: EffectLayer,
+  fps: number,
+  stage: boolean,
+  actor?: Actor,
+): LayerCursor {
   const validated = validateEffectOptions(layer.effectId, layer.options);
   if (!validated.ok) throw new Error(validated.reason);
   const base = getEffect(layer.effectId)!;
-  const acted = stage && Boolean(base.act);
+  const acted = stage && Boolean(base.act) && !actor;
   const mod = acted ? applyActOverrides(base, layer.actOverrides) : base;
   const dt = layer.speed / fps;
 

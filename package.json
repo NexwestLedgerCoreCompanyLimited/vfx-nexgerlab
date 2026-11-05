@@ -22,7 +22,9 @@
     "test:e2e": "electron-vite build && playwright test",
     "icons": "node scripts/generate-icons.mjs",
     "package": "npm run build && electron-builder",
-    "release:check": "node scripts/verify-release.mjs"
+    "release:check": "node scripts/verify-release.mjs",
+    "allowlist": "vitest run --config vitest.scripts.config.ts scripts/build-actor-allowlist",
+    "golden": "electron-vite build && UPDATE_GOLDEN=1 playwright test --grep \"golden hashes\""
   },
   "dependencies": {
     "@fontsource/inter": "5.3.0",

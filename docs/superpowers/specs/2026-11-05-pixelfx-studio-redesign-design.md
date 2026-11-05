@@ -45,7 +45,8 @@ Measured on 2026-11-05 under Node 26 on macOS. Electron and other platforms are 
 | Only `seed` and `palette` options | 76 of 244 |
 | Text option | 6 effects; the bitmap font has no Thai glyphs |
 | Frame rate | All 244 declare 30 fps |
-| Custom sprite as `o.actor` | 54 of 73 ran with a minimal test actor; 19 threw errors |
+| Custom sprite as `o.actor` | 73 of 73 run with a complete actor shape (first test used a partial shape); visual quality not reviewed |
+| Node vs Electron pixels | Electron's V8 uses a different `sin`/`cos`, so 5 of 732 sampled frames differ by rounding; identical within one Electron build |
 
 ## 5. Licensing
 
@@ -227,7 +228,7 @@ Moved to v0.2 (*builder call, owner to confirm*): user-authored emitter and shap
 | An upstream update changes pixels | Pinned copy, goldens, explicit `engineVersion` |
 | Hostile project file | Registry lookup and option validation; no dynamic import from project data |
 | Live tiles load the CPU | Visible-only playback, 15 fps stepping, active tile cap, measured in Electron |
-| Node determinism differs in Electron | Golden tests run in the real Electron worker on each CI OS |
+| Electron upgrades can shift a few pixels | Goldens are generated in the Electron worker; rerun and review them on each upgrade |
 | Custom sprite crashes an effect | Per-effect allowlist from an automated test; catch errors per layer |
 | Thai effect names drift | Key parity CI and fluent review gate |
 | Users think BSL covers the library | README, notices, and About state the MIT portion plainly |

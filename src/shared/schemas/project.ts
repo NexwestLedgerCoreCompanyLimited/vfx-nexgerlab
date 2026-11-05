@@ -59,10 +59,20 @@ export const EffectLayerSchema = z.strictObject({
   placement: z.enum(['behind-sprite', 'in-front-sprite', 'standalone']),
   tracks: z.strictObject({ x: track, y: track, opacity: track, light: track }),
   actOverrides: ActOverridesSchema.optional(),
+  actorAssetId: id.optional(),
 });
 export type EffectLayer = z.infer<typeof EffectLayerSchema>;
 
 const PointSchema = z.strictObject({ x: finite, y: finite });
+
+export const SpriteFxSchema = z.strictObject({
+  id,
+  kind: z.enum(['aura', 'glow', 'light', 'recolor']),
+  color: z.string().regex(hex),
+  strength: finite.min(0).max(1),
+  placement: z.enum(['behind-sprite', 'in-front-sprite']),
+});
+export type SpriteFx = z.infer<typeof SpriteFxSchema>;
 
 export const SpriteAttachmentSchema = z.strictObject({
   id,
@@ -75,6 +85,7 @@ export const SpriteAttachmentSchema = z.strictObject({
     .max(MAX_FRAMES),
   behindPartIds: z.array(id),
   inFrontPartIds: z.array(id),
+  fx: z.array(SpriteFxSchema).max(16).optional(),
 });
 export type SpriteAttachment = z.infer<typeof SpriteAttachmentSchema>;
 

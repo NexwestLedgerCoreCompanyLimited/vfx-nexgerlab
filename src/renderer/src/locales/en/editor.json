@@ -130,5 +130,23 @@
     "size": "Size",
     "count": "Count",
     "hover": "Hover"
-  }
+  },
+  "spriteFx": "Sprite effects",
+  "addFx": {
+    "aura": "Add aura",
+    "glow": "Add glow",
+    "light": "Add light",
+    "recolor": "Add recolor"
+  },
+  "fxNames": {
+    "aura": "Aura",
+    "glow": "Glow",
+    "light": "Light",
+    "recolor": "Recolor"
+  },
+  "fxColor": "Color",
+  "fxStrength": "Strength",
+  "removeFx": "Remove",
+  "useAsCharacter": "Use as character for this effect",
+  "usingCharacter": "Used as character"
 }

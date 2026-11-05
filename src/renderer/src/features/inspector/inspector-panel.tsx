@@ -97,7 +97,7 @@ export function InspectorPanel() {
   return (
     <aside className="side right" aria-label={t('basic')}>
       <div>
-        <h2>{entry.meta.name}</h2>
+        <h2>{t(`effects:items.${entry.id}.name`, { defaultValue: entry.meta.name })}</h2>
         <p className="mono small muted">{entry.id}</p>
       </div>
       <ActControls layer={layer} />

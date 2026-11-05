@@ -1,10 +1,12 @@
 import type { AssetFrame } from '../shared/models/asset';
-import type { EffectLayer, ProjectV1 } from '../shared/schemas/project';
+import type { EffectLayer, ProjectV1, SpriteFx } from '../shared/schemas/project';
+import { spriteToActor, supportsCustomActor, type Actor } from './actor-adapter';
 import { blendInto } from './blend';
 import { createLayerCursor, type LayerCursor, type LayerPart } from './layer-cursor';
 import { backdrop, clearFrame, composite, createFrame } from './pixelfx/src/core/index.js';
 import type { LayerError, RenderOptions, RenderResult } from './render-types';
 import { resolveAttachmentFrame } from './sprite-attachment';
+import { renderSpriteFx } from './sprite-fx';
 import { sampleNumberTrack } from './timeline';
 
 interface CacheEntry {
@@ -19,11 +21,21 @@ export interface RenderCache {
 
 export const createRenderCache = (): RenderCache => ({ cursors: new Map() });
 
+function actorFor(
+  layer: EffectLayer,
+  assets: ReadonlyMap<string, AssetFrame[]>,
+): Actor | undefined {
+  if (!layer.actorAssetId || !supportsCustomActor(layer.effectId)) return undefined;
+  const frame = assets.get(layer.actorAssetId)?.[0];
+  return frame && spriteToActor(frame, { x: frame.width / 2, y: frame.height });
+}
+
 function cursorFor(
   layer: EffectLayer,
   fps: number,
   stage: boolean,
   cache: RenderCache,
+  assets: ReadonlyMap<string, AssetFrame[]>,
 ): CacheEntry {
   const signature = JSON.stringify([layer, fps, stage]);
   const key = `${layer.id}:${stage}`;
@@ -31,7 +43,7 @@ function cursorFor(
   if (entry?.signature !== signature) {
     entry = { signature };
     try {
-      entry.cursor = createLayerCursor(layer, fps, stage);
+      entry.cursor = createLayerCursor(layer, fps, stage, actorFor(layer, assets));
     } catch (error) {
       entry.error = (error as Error).message;
     }
@@ -50,25 +62,29 @@ function fillBackground(out: Uint8ClampedArray, hex: string): void {
   }
 }
 
-function drawSprite(
+function drawLayer(
   out: Uint8ClampedArray,
   width: number,
   height: number,
-  sprite: AssetFrame,
+  rgba: Uint8ClampedArray,
+  w: number,
+  h: number,
   dx: number,
   dy: number,
+  blend: EffectLayer['blend'],
 ): void {
   const layer = new Uint8ClampedArray(out.length);
-  for (let y = Math.max(0, -dy); y < sprite.height && y + dy < height; y++) {
-    const from = Math.max(0, -dx);
-    const to = Math.min(sprite.width, width - dx);
-    if (to <= from) continue;
-    layer.set(
-      sprite.rgba.subarray((y * sprite.width + from) * 4, (y * sprite.width + to) * 4),
-      ((y + dy) * width + dx + from) * 4,
-    );
+  const from = Math.max(0, -dx);
+  const to = Math.min(w, width - dx);
+  if (to > from) {
+    for (let y = Math.max(0, -dy); y < h && y + dy < height; y++) {
+      layer.set(
+        rgba.subarray((y * w + from) * 4, (y * w + to) * 4),
+        ((y + dy) * width + dx + from) * 4,
+      );
+    }
   }
-  blendInto(out, layer, 'normal', 1);
+  blendInto(out, layer, blend, 1);
 }
 
 function shifted(
@@ -117,7 +133,7 @@ export function renderProjectFrame(
   let shake: [number, number] = [0, 0];
 
   const paint = (layer: EffectLayer, part: LayerPart) => {
-    const entry = cursorFor(layer, fps, includeStage, cache);
+    const entry = cursorFor(layer, fps, includeStage, cache, assets);
     if (!entry.cursor) {
       if (!errors.some((e) => e.layerId === layer.id)) {
         errors.push({ layerId: layer.id, message: entry.error ?? 'unknown' });
@@ -160,14 +176,18 @@ export function renderProjectFrame(
       const resolved = resolveAttachmentFrame(attachment, frameIndex);
       const sprite = frames[resolved.sourceFrameIndex];
       if (!sprite) continue;
-      drawSprite(
-        out,
-        width,
-        height,
-        sprite,
-        Math.round(resolved.anchor.x - resolved.pivot.x),
-        Math.round(resolved.anchor.y - resolved.pivot.y),
-      );
+      const dx = Math.round(resolved.anchor.x - resolved.pivot.x);
+      const dy = Math.round(resolved.anchor.y - resolved.pivot.y);
+      const drawFx = (placement: SpriteFx['placement']) => {
+        for (const item of attachment.fx ?? []) {
+          if (item.placement !== placement) continue;
+          const l = renderSpriteFx(item, sprite, frameIndex);
+          drawLayer(out, width, height, l.rgba, l.width, l.height, dx + l.dx, dy + l.dy, l.blend);
+        }
+      };
+      drawFx('behind-sprite');
+      drawLayer(out, width, height, sprite.rgba, sprite.width, sprite.height, dx, dy, 'normal');
+      drawFx('in-front-sprite');
     }
   }
   if (partFilter !== 'behind') {

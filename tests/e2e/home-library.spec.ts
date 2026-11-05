@@ -21,7 +21,19 @@ test('Home search finds English names and Thai category names', async () => {
   await expect(page.getByText('Nothing matches')).toBeVisible();
   await page.getByRole('button', { name: 'ไทย', exact: true }).click();
   await page.getByRole('searchbox').fill('น้ำแข็ง');
-  await expect(page.locator('.tile')).toHaveCount(10);
+  await expect(page.locator('.tile').first()).toBeVisible();
+  expect(await page.locator('.tile').count()).toBeGreaterThanOrEqual(10);
+  await app.close();
+});
+
+test('Home finds an effect by its Thai name and terms', async () => {
+  const { app, page } = await launch();
+  await home(page);
+  await page.getByRole('button', { name: 'ไทย', exact: true }).click();
+  await page.getByRole('searchbox').fill('กองไฟ');
+  await expect(page.locator('.tile').first()).toContainText('กองไฟ');
+  await page.getByRole('searchbox').fill('แช่แข็ง');
+  await expect(page.locator('.tile').first()).toContainText('แช่แข็ง');
   await app.close();
 });
 

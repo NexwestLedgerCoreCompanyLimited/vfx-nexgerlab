@@ -107,7 +107,9 @@ export function QuickLook() {
         <aside className="look-side">
           <div className="stack tight">
             <h1>{name}</h1>
-            <p className="muted">{meta.desc}</p>
+            <p className="muted">
+              {t(`effects:items.${entry.id}.desc`, { defaultValue: meta.desc })}
+            </p>
             <p className="mono small muted">
               {t('facts', {
                 kind: meta.loop ? t('loop') : t('once'),
