@@ -170,9 +170,8 @@ test('a reopened project exports its sprite without visiting the Sprites tab', a
   await second.page.getByLabel('File name').fill('reopen');
   await second.page.getByRole('button', { name: 'Choose a folder and export' }).click();
   await expect(second.page.getByRole('status').last()).toContainText('Exported');
-  const direction = readdirSync(join(out, 'reopen'))[0]!;
-  const file = readdirSync(join(out, 'reopen', direction))[0]!;
-  const image = PNG.sync.read(readFileSync(join(out, 'reopen', direction, file)));
+  const file = readdirSync(join(out, 'reopen', 'S'))[0]!;
+  const image = PNG.sync.read(readFileSync(join(out, 'reopen', 'S', file)));
   expect([...image.data].some((v, i) => i % 4 === 3 && v > 0)).toBe(true);
   await second.app.close();
 });

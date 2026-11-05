@@ -64,6 +64,11 @@ test('sprite effects: custom character is offered only where tested', async () =
   await on.app.close();
 });
 
+// Goldens are recorded on arm64. x64 rounds one pixel path differently in this one frame of 732.
+const X64_GOLDEN = {
+  'water/geyser': ['857481edff18ef5c', '0374d5ed70ffc4f0', '165db9c5bb0acce4'],
+};
+
 // Goldens come from Electron, the runtime that ships. Node's V8 uses a different sin and cos, so a few
 // pixels round differently there. Upgrading Electron can do the same: rerun `npm run golden` and review.
 test('sprite effects: all 244 effects match golden hashes in a real worker', async () => {
@@ -95,6 +100,8 @@ test('sprite effects: all 244 effects match golden hashes in a real worker', asy
     ids,
   );
   if (process.env.UPDATE_GOLDEN) writeFileSync(file, `${JSON.stringify(hashes)}\n`);
-  expect(hashes).toEqual(JSON.parse(readFileSync(file, 'utf8')));
+  const golden = JSON.parse(readFileSync(file, 'utf8')) as Record<string, string[]>;
+  if (process.arch === 'x64') Object.assign(golden, X64_GOLDEN);
+  expect(hashes).toEqual(golden);
   await app.close();
 });
