@@ -6,6 +6,13 @@ const api: VfxlabApi = {
   getPreferences: () => ipcRenderer.invoke(IPC.getPreferences),
   setLanguage: (language) => ipcRenderer.invoke(IPC.setLanguage, language),
   markSplashSeen: () => ipcRenderer.invoke(IPC.markSplashSeen),
+  createProject: (name) => ipcRenderer.invoke(IPC.createProject, name),
+  openProject: (path) => ipcRenderer.invoke(IPC.openProject, path),
+  saveProject: (path, project) => ipcRenderer.invoke(IPC.saveProject, path, project),
+  recoverProject: (path) => ipcRenderer.invoke(IPC.recoverProject, path),
+  applyBackup: (path) => ipcRenderer.invoke(IPC.applyBackup, path),
+  listRecentProjects: () => ipcRenderer.invoke(IPC.listRecentProjects),
+  removeRecentProject: (path) => ipcRenderer.invoke(IPC.removeRecentProject, path),
 };
 
 contextBridge.exposeInMainWorld('vfxlab', api);

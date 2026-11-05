@@ -2,8 +2,11 @@ import { BrowserWindow, app, ipcMain, session } from 'electron';
 import { join } from 'node:path';
 import { IPC, type AppInfo } from '../shared/contracts/ipc';
 import { LanguageSchema } from '../shared/models/preferences';
+import { registerProjectIpc } from './ipc/project-ipc';
 import { WEB_PREFERENCES } from './security';
+import { nodeFileSystem } from './services/file-system-adapter';
 import { createPreferencesService } from './services/preferences-service';
+import { createProjectService } from './services/project-service';
 
 const devUrl = process.env.ELECTRON_RENDERER_URL;
 
@@ -44,6 +47,12 @@ void app.whenReady().then(() => {
     preferences.setLanguage(LanguageSchema.parse(language)),
   );
   ipcMain.handle(IPC.markSplashSeen, () => preferences.markSplashSeen());
+  registerProjectIpc(
+    createProjectService({
+      fs: nodeFileSystem,
+      recentFile: join(app.getPath('userData'), 'recent-projects.json'),
+    }),
+  );
   denyNetwork();
   createWindow();
   app.on('activate', () => {

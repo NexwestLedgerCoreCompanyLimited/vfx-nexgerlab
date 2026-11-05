@@ -10,7 +10,19 @@ test('secure shell exposes only the typed bridge', async () => {
   }));
   expect(probe.require).toBe('undefined');
   expect(probe.process).toBe('undefined');
-  expect(probe.keys).toEqual(['getAppInfo', 'getPreferences', 'markSplashSeen', 'setLanguage']);
+  expect(probe.keys).toEqual([
+    'applyBackup',
+    'createProject',
+    'getAppInfo',
+    'getPreferences',
+    'listRecentProjects',
+    'markSplashSeen',
+    'openProject',
+    'recoverProject',
+    'removeRecentProject',
+    'saveProject',
+    'setLanguage',
+  ]);
   expect(await page.evaluate(() => window.vfxlab.getAppInfo())).toMatchObject({
     name: 'VFX NexgerLab',
   });
