@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { IPC, type AppInfo } from '../shared/contracts/ipc';
 import { LanguageSchema } from '../shared/models/preferences';
 import { registerAssetIpc } from './ipc/asset-ipc';
+import { registerExportIpc } from './ipc/export-ipc';
 import { registerProjectIpc } from './ipc/project-ipc';
 import { WEB_PREFERENCES } from './security';
 import { nodeFileSystem } from './services/file-system-adapter';
@@ -55,6 +56,7 @@ void app.whenReady().then(() => {
     }),
   );
   registerAssetIpc(assertKnown);
+  registerExportIpc();
   denyNetwork();
   createWindow();
   app.on('activate', () => {

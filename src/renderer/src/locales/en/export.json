@@ -1,4 +1,31 @@
 {
   "title": "Export: {{name}}",
-  "note": "Uses the same frames as the preview, with no resizing."
+  "note": "Uses the same frames as the preview, with no resizing.",
+  "backToEdit": "Back to editing",
+  "format": "File format",
+  "formats": {
+    "spritesheet-json": {
+      "name": "Sprite sheet + JSON",
+      "body": "For game engines"
+    },
+    "png-sequence": {
+      "name": "PNG sequence",
+      "body": "One file per frame"
+    }
+  },
+  "directions": "Directions",
+  "include": "Also include",
+  "split": "Split front and back",
+  "act": "Act timing",
+  "preview": "Real output",
+  "size": "{{frames}} frames · {{columns}} columns · {{width}} × {{height}} px",
+  "json": "Frame data (JSON)",
+  "engineNote": "Made for Aseprite JSON and Phaser atlas loaders. Test it in your engine before relying on it.",
+  "fileName": "File name",
+  "run": "Choose a folder and export",
+  "progress": "Export progress",
+  "done": "Exported {{count}} files",
+  "overwrite": "{{count}} files already exist. Replace them?",
+  "tooLarge": "This export is too large. Use fewer frames or directions.",
+  "failed": "The export failed, so nothing was written."
 }

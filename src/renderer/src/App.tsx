@@ -4,7 +4,7 @@ import i18n from './i18n';
 import type { Language, Preferences } from '../../shared/models/preferences';
 import { EditorScreen } from './features/editor/editor-screen';
 import { useEditor } from './features/editor/use-editor-store';
-import { ExportScreen } from './features/export/export-screen';
+import { ExportScreen } from './features/export/export-dialog';
 import { setGalleryReduced } from './features/home/effect-grid';
 import { HomeScreen } from './features/home/home-screen';
 import { QuickLook } from './features/quick-look/quick-look';

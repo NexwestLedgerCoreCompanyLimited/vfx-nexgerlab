@@ -481,3 +481,68 @@ input[type='number'].input {
   height: 36px;
   font-size: 13.5px;
 }
+
+/* export */
+.export {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) 320px;
+}
+.export-mid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  min-width: 0;
+  min-height: 0;
+}
+.between-row {
+  justify-content: space-between;
+}
+.export-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+}
+.fmt {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  text-align: left;
+  padding: 9px 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--text);
+  font: 500 14px var(--ui);
+  cursor: pointer;
+}
+.fmt small {
+  font: 400 12.5px var(--ui);
+  color: var(--muted);
+}
+.fmt[aria-pressed='true'] {
+  border-color: var(--cy);
+  background: var(--raised);
+}
+.json {
+  margin: 0;
+  padding: 10px;
+  background: var(--canvas);
+  font: 400 12px/1.5 var(--mono);
+  color: #bdf7ff;
+  overflow: auto;
+  max-height: 340px;
+  white-space: pre;
+  user-select: text;
+}
+progress {
+  width: 100%;
+  accent-color: var(--cy);
+}

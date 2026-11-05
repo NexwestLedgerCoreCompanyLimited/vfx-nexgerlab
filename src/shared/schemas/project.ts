@@ -141,6 +141,14 @@ export const ComposerTurnSchema = z.strictObject({
 });
 export type ComposerTurn = z.infer<typeof ComposerTurnSchema>;
 
+export const DirectionOverrideSchema = z.strictObject({
+  angle: finite.optional(),
+  palette: z.array(z.string().regex(hex)).min(1).max(32).optional(),
+  speed: z.literal(LAYER_SPEEDS).optional(),
+  hiddenLayers: z.array(id).optional(),
+});
+export type DirectionOverride = z.infer<typeof DirectionOverrideSchema>;
+
 const unique = (ids: string[]) => new Set(ids).size === ids.length;
 
 export const ProjectSchema = z
@@ -166,6 +174,12 @@ export const ProjectSchema = z
     activeVersionId: id,
     presets: z.array(PresetDescriptorSchema).max(512),
     composerHistory: z.array(ComposerTurnSchema).max(2048),
+    directions: z
+      .strictObject({
+        count: z.literal([1, 4, 8, 16]),
+        overrides: z.partialRecord(z.string().regex(/^[NSEW]{1,3}$/), DirectionOverrideSchema),
+      })
+      .optional(),
     createdAt: timestamp,
     updatedAt: timestamp,
   })

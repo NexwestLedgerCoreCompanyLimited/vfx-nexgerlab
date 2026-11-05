@@ -17,6 +17,11 @@ const api: VfxlabApi = {
   importAsset: (handle, strip) => ipcRenderer.invoke(IPC.importAsset, handle, strip),
   readAssetFrames: (path, ref) => ipcRenderer.invoke(IPC.readAssetFrames, path, ref),
   removeAsset: (path, project, id) => ipcRenderer.invoke(IPC.removeAsset, path, project, id),
+  exportBegin: () => ipcRenderer.invoke(IPC.exportBegin),
+  exportWrite: (session, path, bytes) => ipcRenderer.invoke(IPC.exportWrite, session, path, bytes),
+  exportCommit: (session, overwrite) => ipcRenderer.invoke(IPC.exportCommit, session, overwrite),
+  exportAbort: (session) => ipcRenderer.invoke(IPC.exportAbort, session),
+  exportName: (name) => ipcRenderer.invoke(IPC.exportName, name),
 };
 
 contextBridge.exposeInMainWorld('vfxlab', api);

@@ -18,6 +18,11 @@ export const IPC = {
   importAsset: 'asset:import',
   readAssetFrames: 'asset:read-frames',
   removeAsset: 'asset:remove',
+  exportBegin: 'export:begin',
+  exportWrite: 'export:write',
+  exportCommit: 'export:commit',
+  exportAbort: 'export:abort',
+  exportName: 'export:name',
 } as const;
 
 export interface AppInfo {
@@ -59,6 +64,14 @@ export interface VfxlabApi {
   importAsset(handle: ProjectHandle, strip?: StripLayout): Promise<AssetRef>;
   readAssetFrames(path: string, ref: AssetRef): Promise<AssetFrame[]>;
   removeAsset(path: string, project: ProjectV1, assetId: string): Promise<void>;
+  exportBegin(): Promise<string | undefined>;
+  exportWrite(session: string, path: string, bytes: Uint8Array): Promise<void>;
+  exportCommit(
+    session: string,
+    overwrite: boolean,
+  ): Promise<{ status: 'ok' | 'exists'; files: string[] }>;
+  exportAbort(session: string): Promise<void>;
+  exportName(name: string): Promise<string>;
 }
 
 declare global {

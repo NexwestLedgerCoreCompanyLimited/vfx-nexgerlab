@@ -4,6 +4,11 @@ import { launch } from '../helpers/app';
 const BRIDGE = [
   'applyBackup',
   'createProject',
+  'exportAbort',
+  'exportBegin',
+  'exportCommit',
+  'exportName',
+  'exportWrite',
   'getAppInfo',
   'getPreferences',
   'importAsset',
