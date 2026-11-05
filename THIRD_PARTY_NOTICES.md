@@ -2,6 +2,16 @@
 
 VFX NexgerLab is licensed under BSL 1.1, except for the material below, which keeps its own license.
 
+## pixelfx
+
+`src/engine/pixelfx/` is a copy of [pixelfx](https://github.com/patch-gg/pixelfx) at commit `a84159688af3ca37a4be05a0d422b94451b2e24e`. It stays under the MIT License and is not part of the BSL Licensed Work. Anyone may use the original under MIT.
+
+- Copyright (c) 2026 Patch
+- Copyright (c) 2026 Hugo Duprez. `src/core/sim.js` and effects that say so in their first lines adapt Sprite Fusion's open-source pixel art VFX.
+- Copyright (c) 2026 rehan-remade. `src/core/act.js` adapts how Hollow Crown plays its skills.
+
+The full MIT text is in `src/engine/pixelfx/LICENSE`, and details are in `src/engine/pixelfx/NOTICE.md`. The Patch Pixel font is not included.
+
 ## Fonts
 
 All SIL Open Font License 1.1, bundled through Fontsource.

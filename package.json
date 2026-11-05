@@ -14,7 +14,7 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
-    "lint": "oxlint src tests scripts",
+    "lint": "oxlint --ignore-pattern src/engine/pixelfx src tests scripts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:unit": "vitest run",
