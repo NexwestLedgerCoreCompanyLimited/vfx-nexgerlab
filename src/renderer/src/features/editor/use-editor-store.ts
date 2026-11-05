@@ -3,6 +3,7 @@ import type { EditorCommand } from '../../../../engine/commands';
 import { createHistory, execute, redo, undo, type History } from '../../../../engine/history';
 import { createProjectFromEffect } from '../../../../engine/project-factory';
 import type { ProjectHandle } from '../../../../shared/contracts/ipc';
+import { newProject } from '../../../../shared/models/new-project';
 import type { ProjectV1 } from '../../../../shared/schemas/project';
 
 export type Route = 'home' | 'quick-look' | 'studio' | 'export';
@@ -17,11 +18,13 @@ interface EditorState {
   currentFrame: number;
   playback: Playback;
   zoom: number;
+  startTab: 'layers' | 'sprites';
   dirty: boolean;
   renderRevision: number;
   reset(): void;
   go(route: Route): void;
   openEffect(id: string, name: string, language: 'en' | 'th'): void;
+  openBlank(name: string, startTab?: 'layers' | 'sprites'): void;
   openHandle(handle: ProjectHandle): void;
   setHandle(handle: ProjectHandle): void;
   markSaved(): void;
@@ -44,6 +47,7 @@ const blank = {
   currentFrame: 0,
   playback: 'playing' as Playback,
   zoom: 2,
+  startTab: 'layers' as 'layers' | 'sprites',
   dirty: false,
   renderRevision: 0,
 };
@@ -79,6 +83,10 @@ export const useEditor = create<EditorState>((set, get) => {
     go: (route) => set({ route, currentFrame: 0 }),
     openEffect: (id, name, language) =>
       load(createProjectFromEffect(id, { name, language }), 'quick-look'),
+    openBlank: (name, startTab = 'layers') => {
+      set({ startTab });
+      load(newProject(name), 'studio');
+    },
     openHandle: (handle) => load(handle.project, 'studio', handle),
     setHandle: (handle) => set({ handle }),
     markSaved: () => set({ dirty: false }),

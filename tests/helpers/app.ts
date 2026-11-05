@@ -29,3 +29,20 @@ export async function bench() {
 export function run<T>(page: Page, fn: (arg: never) => T | Promise<T>, arg: unknown): Promise<T> {
   return page.evaluate(fn as never, arg as never) as Promise<T>;
 }
+
+/** Skips the splash and picks English, landing on Home. */
+export async function home(page: Page) {
+  await page.locator('canvas').first().click();
+  await page.getByRole('button', { name: 'English', exact: true }).click();
+  await page.locator('.home').waitFor();
+}
+
+export async function stubFolderPicker(app: ElectronApplication, paths: string[]) {
+  await app.evaluate(({ dialog }, list) => {
+    let call = 0;
+    dialog.showOpenDialog = (async () => ({
+      canceled: false,
+      filePaths: [list[Math.min(call++, list.length - 1)]!],
+    })) as typeof dialog.showOpenDialog;
+  }, paths);
+}

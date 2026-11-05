@@ -2,7 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18n from './i18n';
 import type { Language, Preferences } from '../../shared/models/preferences';
+import { EditorScreen } from './features/editor/editor-screen';
+import { useEditor } from './features/editor/use-editor-store';
+import { ExportScreen } from './features/export/export-screen';
+import { setGalleryReduced } from './features/home/effect-grid';
 import { HomeScreen } from './features/home/home-screen';
+import { QuickLook } from './features/quick-look/quick-look';
 import { LanguageChooser } from './features/settings/language-menu';
 import { SplashScreen } from './features/splash/splash-screen';
 import { splashStart } from './features/splash/splash-effect';
@@ -13,6 +18,7 @@ export function App() {
   const [start, setStart] = useState<number>();
   const [progress, setProgress] = useState(0);
   const [splashDone, setSplashDone] = useState(false);
+  const route = useEditor((s) => s.route);
 
   useEffect(() => {
     void (async () => {
@@ -20,6 +26,7 @@ export function App() {
       await i18n.changeLanguage(loaded.language);
       const reduced =
         loaded.reducedMotion || matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setGalleryReduced(reduced);
       setPrefs(loaded);
       setStart(splashStart({ hasSeenSplash: loaded.hasSeenSplash, reducedMotion: reduced }));
       setProgress(0.5);
@@ -56,5 +63,9 @@ export function App() {
     );
   }
   if (!prefs.hasChosenLanguage) return <LanguageChooser onChange={chooseLanguage} />;
+  if (route === 'quick-look') return <QuickLook />;
+  if (route === 'studio')
+    return <EditorScreen language={prefs.language} onLanguage={chooseLanguage} />;
+  if (route === 'export') return <ExportScreen />;
   return <HomeScreen language={prefs.language} onLanguage={chooseLanguage} />;
 }

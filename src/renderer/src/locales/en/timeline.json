@@ -1,1 +1,15 @@
-{}
+{
+  "transport": "Playback",
+  "previous": "Previous frame",
+  "next": "Next frame",
+  "loop": "Loop",
+  "position": "{{time}} / {{total}} s",
+  "frame": "Frame {{frame}} · {{fps}} fps",
+  "scrub": "Timeline position",
+  "act": "Act",
+  "frames": "Frames",
+  "windup": "Wind-up",
+  "rise": "Action",
+  "freeze": "Freeze",
+  "recover": "Recovery"
+}

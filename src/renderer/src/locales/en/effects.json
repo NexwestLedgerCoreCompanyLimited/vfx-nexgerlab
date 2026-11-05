@@ -1,1 +1,25 @@
-{}
+{
+  "categories": {
+    "moves": "Moves",
+    "fire": "Fire",
+    "explosions": "Explosions",
+    "water": "Water",
+    "ice": "Ice",
+    "lightning": "Lightning",
+    "scifi": "Sci-fi",
+    "melee": "Melee",
+    "impacts": "Impacts",
+    "projectiles": "Projectiles",
+    "spawn": "Spawn & death",
+    "arcane": "Arcane",
+    "holy": "Holy",
+    "shadow": "Shadow",
+    "status": "Status",
+    "nature": "Nature",
+    "weather": "Weather",
+    "ui": "UI",
+    "pickups": "Pickups",
+    "transitions": "Transitions",
+    "critters": "Critters"
+  }
+}

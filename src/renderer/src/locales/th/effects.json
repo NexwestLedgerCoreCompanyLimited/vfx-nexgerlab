@@ -1,1 +1,25 @@
-{}
+{
+  "categories": {
+    "moves": "ท่าโจมตี",
+    "fire": "ไฟ",
+    "explosions": "ระเบิด",
+    "water": "น้ำ",
+    "ice": "น้ำแข็ง",
+    "lightning": "สายฟ้า",
+    "scifi": "ไซไฟ",
+    "melee": "ประชิด",
+    "impacts": "แรงปะทะ",
+    "projectiles": "กระสุน",
+    "spawn": "เกิดและตาย",
+    "arcane": "เวทมนตร์",
+    "holy": "ศักดิ์สิทธิ์",
+    "shadow": "เงา",
+    "status": "สถานะ",
+    "nature": "ธรรมชาติ",
+    "weather": "สภาพอากาศ",
+    "ui": "UI",
+    "pickups": "ไอเทม",
+    "transitions": "ทรานสิชัน",
+    "critters": "สัตว์"
+  }
+}

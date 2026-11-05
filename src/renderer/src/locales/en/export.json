@@ -1,1 +1,4 @@
-{}
+{
+  "title": "Export: {{name}}",
+  "note": "Uses the same frames as the preview, with no resizing."
+}

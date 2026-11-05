@@ -1,1 +1,25 @@
-{}
+{
+  "label": "Tell the effect what to do",
+  "placeholder": "e.g. make it heavier, in blue",
+  "apply": "Apply as new version",
+  "understood": "Understood: {{text}}",
+  "cannot": "Cannot do: {{text}}",
+  "history": "Composer history",
+  "vocabulary": "Words it knows",
+  "hint": "Runs on your computer. It reads known words only, and it shows what it could not use.",
+  "reason": {
+    "unknown": "not a known word",
+    "no-palette": "this effect has no palette",
+    "out-of-range": "outside the allowed range"
+  },
+  "action": {
+    "effect": "add {{value}}",
+    "palette": "palette {{value}}",
+    "duration": "{{value}} seconds",
+    "speed": "speed {{value}}×",
+    "intensity-up": "stronger",
+    "intensity-down": "softer",
+    "flip": "flip",
+    "placement": "move {{value}}"
+  }
+}

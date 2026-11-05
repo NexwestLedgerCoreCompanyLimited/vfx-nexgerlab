@@ -4,13 +4,39 @@
     "title": "What effect are you making today?",
     "new": "New",
     "importSprite": "Import sprite",
-    "offline": "Works offline"
+    "offline": "Works offline",
+    "library": "Library",
+    "myEffects": "My Effects",
+    "projects": "Projects",
+    "searchLabel": "Search, or type what you want in Thai or English",
+    "searchPlaceholder": "e.g. blue fire 2 seconds",
+    "try": "Try",
+    "tryFire": "blue fire",
+    "tryBlast": "explosion",
+    "tryHeal": "heal",
+    "recent": "Recent work",
+    "noRecent": "Nothing yet",
+    "unavailable": "Not found",
+    "remove": "Remove from list",
+    "all": "All",
+    "none": "Nothing matches. Try fire, ice, or chest.",
+    "loop": "loop",
+    "seconds": "{{value}} s",
+    "recover": "This project is damaged. Restore the backup from {{date}}?",
+    "recoverAction": "Restore backup",
+    "unrecoverable": "This project is damaged and has no usable backup.",
+    "tooNew": "This project was made by a newer version.",
+    "notFound": "The project folder could not be found."
   },
-  "language": { "label": "Language", "choose": "Choose your language" },
+  "language": {
+    "label": "Language",
+    "choose": "Choose your language"
+  },
   "splash": {
     "label": "Opening animation. Press any key to skip.",
     "engine": "Preparing the render engine",
     "library": "Opening the effect library",
     "ready": "Ready. Everything runs on your computer"
-  }
+  },
+  "newProject": "Untitled effect"
 }
