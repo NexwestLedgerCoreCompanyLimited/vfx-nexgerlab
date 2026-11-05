@@ -4,6 +4,7 @@ import { IPC, type AppInfo } from '../shared/contracts/ipc';
 import { LanguageSchema } from '../shared/models/preferences';
 import { registerAssetIpc } from './ipc/asset-ipc';
 import { registerExportIpc } from './ipc/export-ipc';
+import { registerMcpIpc } from './ipc/mcp-ipc';
 import { registerProjectIpc } from './ipc/project-ipc';
 import { WEB_PREFERENCES } from './security';
 import { nodeFileSystem } from './services/file-system-adapter';
@@ -41,7 +42,7 @@ function createWindow(): void {
 }
 
 void app.whenReady().then(() => {
-  const preferences = createPreferencesService(app.getPath('userData'), app.getLocale());
+  const preferences = createPreferencesService(app.getPath('userData'));
   const info: AppInfo = { name: 'VFX NexgerLab', version: app.getVersion() };
   ipcMain.handle(IPC.getAppInfo, () => info);
   ipcMain.handle(IPC.getPreferences, () => preferences.get());
@@ -57,6 +58,7 @@ void app.whenReady().then(() => {
   );
   registerAssetIpc(assertKnown);
   registerExportIpc();
+  registerMcpIpc();
   denyNetwork();
   createWindow();
   app.on('activate', () => {

@@ -1,0 +1,69 @@
+{
+  "back": "Library",
+  "charactersTitle": "Characters",
+  "describe": "Describe your character",
+  "describeHint": "Use a role, a color, and a weapon, in English or Thai. Words it does not know are shown, not guessed.",
+  "unknownWord": "Unknown word: {{word}}",
+  "newLook": "New look",
+  "animation": "Animation",
+  "directions": "Directions",
+  "exportAll": "Export all animations",
+  "saved": "Saved {{count}} files",
+  "overwrite": "{{count}} files already exist. Replace them?",
+  "animations": {
+    "idle": "Idle",
+    "walk": "Walk",
+    "run": "Run",
+    "jump": "Jump",
+    "attack": "Attack",
+    "cast": "Cast",
+    "hurt": "Hurt",
+    "death": "Death"
+  },
+  "mapsTitle": "Maps",
+  "mapKind": "Map type",
+  "kinds": {
+    "topdown": "2D top-down",
+    "sidescroller": "2D side-scroller",
+    "isometric": "Isometric",
+    "voxel3d": "3D voxel"
+  },
+  "biome": "Biome",
+  "biomes": {
+    "temperate": "Temperate",
+    "desert": "Desert",
+    "snow": "Snow",
+    "island": "Island"
+  },
+  "mapSize": "Map size",
+  "newMap": "New map",
+  "brush": "Paint tile",
+  "tiles": {
+    "water": "Water",
+    "sand": "Sand",
+    "grass": "Grass",
+    "forest": "Forest",
+    "dirt": "Dirt",
+    "rock": "Rock",
+    "snow": "Snow"
+  },
+  "exportMap": "Export map",
+  "connectTitle": "Connect AI",
+  "connectIntro": "Add this to your AI client's MCP settings. The client then creates effects, characters, tilesets, and maps with this app, through local stdio.",
+  "connectConfig": "MCP settings",
+  "copy": "Copy settings",
+  "copied": "Copied",
+  "connectOutput": "Files go to {{path}}.",
+  "connectPrivacy": "The server runs on your computer. It uses no network, and it only writes inside that folder.",
+  "connectTools": "Tools",
+  "tools": {
+    "list_effects": "Search the 244 effects",
+    "list_palettes": "List color palettes",
+    "render_effect": "Render an effect to files",
+    "compose_effect": "Make an effect from an instruction",
+    "create_character": "Make an animated character",
+    "create_map": "Make a 2D, isometric, or 3D map",
+    "create_tileset": "Make a Wang tileset",
+    "create_project": "Make a project to open here"
+  }
+}

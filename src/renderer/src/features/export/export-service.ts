@@ -1,5 +1,7 @@
 import { resolveDirectionProject } from '../../../../engine/directions';
 import { encodeApng } from '../../../../engine/exporters/apng';
+import { encodeAseprite } from '../../../../engine/exporters/aseprite';
+import { encodeBmp } from '../../../../engine/exporters/bmp';
 import { buildGamePack, type GamePackEntry } from '../../../../engine/exporters/game-pack';
 import { encodeGif } from '../../../../engine/exporters/gif';
 import { buildExportMetadata } from '../../../../engine/exporters/metadata';
@@ -9,6 +11,8 @@ import {
   packSheet,
   type SheetLayout,
 } from '../../../../engine/exporters/spritesheet';
+import { encodeTga } from '../../../../engine/exporters/tga';
+import { assembleAnimatedWebp } from '../../../../engine/exporters/webp';
 import { generateNormalMap } from '../../../../engine/normal-map';
 import { exportFrameCount } from '../../../../engine/project-factory';
 import type { FrameRGBA, RenderOptions } from '../../../../engine/render-types';
@@ -19,8 +23,19 @@ import {
 } from '../../../../shared/directions';
 import type { ProjectV1 } from '../../../../shared/schemas/project';
 import type { RenderClient } from '../../engine/render-client';
+import { encodeWithCanvas } from '../assets/decode-image';
 
-export type ExportFormat = 'spritesheet-json' | 'png-sequence' | 'gif' | 'apng' | 'game-pack';
+export type ExportFormat =
+  | 'spritesheet-json'
+  | 'png-sequence'
+  | 'gif'
+  | 'apng'
+  | 'webp'
+  | 'aseprite'
+  | 'bmp-sequence'
+  | 'tga-sequence'
+  | 'jpeg-sequence'
+  | 'game-pack';
 
 export interface ExportSettings {
   format: ExportFormat;
@@ -63,6 +78,17 @@ export async function renderDirection(
   for await (const frame of client.renderSequence(request, tick, signal)) list.push(frame);
   return list;
 }
+
+const SEQUENCES: Partial<
+  Record<
+    ExportFormat,
+    { extension: string; encode(f: FrameRGBA): Uint8Array | Promise<Uint8Array> }
+  >
+> = {
+  'bmp-sequence': { extension: 'bmp', encode: encodeBmp },
+  'tga-sequence': { extension: 'tga', encode: encodeTga },
+  'jpeg-sequence': { extension: 'jpg', encode: (f) => encodeWithCanvas(f, 'image/jpeg') },
+};
 
 const padded = (i: number) => String(i + 1).padStart(4, '0');
 
@@ -111,6 +137,39 @@ async function* buildFiles(
             path: `${name}${suffix}.png`,
             bytes: encodeApng(list, durations, project.timeline.loop),
           };
+    }
+    return;
+  }
+
+  if (format === 'webp' || format === 'aseprite') {
+    for (const direction of order) {
+      const list = await render(direction);
+      if (signal.aborted) return;
+      const suffix = order.length > 1 ? `-${direction}` : '';
+      if (format === 'aseprite') {
+        yield { path: `${name}${suffix}.aseprite`, bytes: encodeAseprite(list, durations) };
+      } else {
+        const stills = await Promise.all(list.map((f) => encodeWithCanvas(f, 'image/webp')));
+        yield {
+          path: `${name}${suffix}.webp`,
+          bytes: assembleAnimatedWebp(stills, durations, width, height, project.timeline.loop),
+        };
+      }
+    }
+    return;
+  }
+
+  const sequence = SEQUENCES[format];
+  if (sequence) {
+    for (const direction of order) {
+      const list = await render(direction);
+      if (signal.aborted) return;
+      for (let i = 0; i < list.length; i++) {
+        yield {
+          path: `${name}/${direction}/${padded(i)}.${sequence.extension}`,
+          bytes: await sequence.encode(list[i]!),
+        };
+      }
     }
     return;
   }

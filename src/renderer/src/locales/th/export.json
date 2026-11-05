@@ -23,6 +23,26 @@
     "game-pack": {
       "name": "ชุดพร้อมใช้ ZIP",
       "body": "ชิ้นส่วน ทิศทาง normal map และรายการไฟล์"
+    },
+    "webp": {
+      "name": "WebP เคลื่อนไหว",
+      "body": "ไฟล์เล็ก โปร่งใสเต็มช่วง"
+    },
+    "aseprite": {
+      "name": "Aseprite",
+      "body": "แก้ไขเฟรมต่อใน Aseprite ได้"
+    },
+    "bmp-sequence": {
+      "name": "ชุดภาพ BMP",
+      "body": "BMP 32 บิตหนึ่งไฟล์ต่อเฟรม"
+    },
+    "tga-sequence": {
+      "name": "ชุดภาพ TGA",
+      "body": "TGA 32 บิตหนึ่งไฟล์ต่อเฟรม"
+    },
+    "jpeg-sequence": {
+      "name": "ชุดภาพ JPEG",
+      "body": "JPEG หนึ่งไฟล์ต่อเฟรม บนพื้นดำ"
     }
   },
   "directions": "จำนวนทิศ",

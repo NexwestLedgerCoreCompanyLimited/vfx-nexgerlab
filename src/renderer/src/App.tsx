@@ -2,11 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18n from './i18n';
 import type { Language, Preferences } from '../../shared/models/preferences';
+import { CharactersScreen } from './features/characters/characters-screen';
+import { ConnectScreen } from './features/connect/connect-screen';
 import { EditorScreen } from './features/editor/editor-screen';
 import { useEditor } from './features/editor/use-editor-store';
 import { ExportScreen } from './features/export/export-dialog';
 import { setGalleryReduced } from './features/home/effect-grid';
 import { HomeScreen } from './features/home/home-screen';
+import { MapsScreen } from './features/maps/maps-screen';
 import { QuickLook } from './features/quick-look/quick-look';
 import { LanguageChooser } from './features/settings/language-menu';
 import { SplashScreen } from './features/splash/splash-screen';
@@ -67,5 +70,8 @@ export function App() {
   if (route === 'studio')
     return <EditorScreen language={prefs.language} onLanguage={chooseLanguage} />;
   if (route === 'export') return <ExportScreen />;
+  if (route === 'characters') return <CharactersScreen />;
+  if (route === 'maps') return <MapsScreen />;
+  if (route === 'connect') return <ConnectScreen />;
   return <HomeScreen language={prefs.language} onLanguage={chooseLanguage} />;
 }

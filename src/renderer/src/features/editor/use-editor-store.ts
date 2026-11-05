@@ -7,7 +7,7 @@ import type { Direction } from '../../../../shared/directions';
 import { newProject } from '../../../../shared/models/new-project';
 import type { ProjectV1 } from '../../../../shared/schemas/project';
 
-export type Route = 'home' | 'quick-look' | 'studio' | 'export';
+export type Route = 'home' | 'quick-look' | 'studio' | 'export' | 'characters' | 'maps' | 'connect';
 export type Playback = 'stopped' | 'playing';
 
 interface EditorState {

@@ -22,17 +22,21 @@ function actFor(project: ProjectV1) {
   return undefined;
 }
 
-export function buildExportMetadata(input: {
-  project: ProjectV1;
+export interface SheetMetadataInput {
   layout: SheetLayout;
   image: string;
-  includeAct: boolean;
-}): ExportMetadataV1 {
-  const { project, layout, image, includeAct } = input;
+  fps: number;
+  loop: boolean;
+  pivot: [number, number];
+  layers: Array<{ id: string; effectId: string }>;
+  source: { projectId: string; versionId: string };
+  act?: ReturnType<typeof actFor>;
+}
+
+export function buildSheetMetadata(input: SheetMetadataInput): ExportMetadataV1 {
+  const { layout, image, fps, loop, pivot, layers, source, act } = input;
   const { frameWidth: w, frameHeight: h } = layout;
   const order = [...new Set(layout.cells.map((c) => c.direction))];
-  const first = project.layers[0];
-  const act = includeAct ? actFor(project) : undefined;
   return ExportMetadataSchema.parse({
     frames: layout.cells.map((cell) => ({
       filename: `${cell.direction} ${cell.frame}`,
@@ -41,7 +45,7 @@ export function buildExportMetadata(input: {
       trimmed: false,
       spriteSourceSize: { x: 0, y: 0, w, h },
       sourceSize: { w, h },
-      duration: Math.round(1000 / project.timeline.fps),
+      duration: Math.round(1000 / fps),
       direction: cell.direction,
       index: cell.frame,
     })),
@@ -54,17 +58,39 @@ export function buildExportMetadata(input: {
       scale: '1',
       vfxlab: {
         schemaVersion: 1,
-        fps: project.timeline.fps,
-        loop: project.timeline.loop,
+        fps,
+        loop,
         frames: layout.cells.length / order.length,
         canvas: [w, h],
-        pivot: [first?.x ?? 0, first?.y ?? 0],
-        anchor: [first?.x ?? 0, first?.y ?? 0],
+        pivot,
+        anchor: pivot,
         directions: { count: order.length, order },
-        layers: project.layers.map((l) => ({ id: l.id, effectId: l.effectId })),
-        source: { projectId: project.id, versionId: project.activeVersionId },
+        layers,
+        source,
         ...(act ? { act } : {}),
       },
     },
+  });
+}
+
+export function buildExportMetadata(input: {
+  project: ProjectV1;
+  layout: SheetLayout;
+  image: string;
+  includeAct: boolean;
+}): ExportMetadataV1 {
+  const { project, layout, image, includeAct } = input;
+  const first = project.layers[0];
+  const pivot: [number, number] = [first?.x ?? 0, first?.y ?? 0];
+  const act = includeAct ? actFor(project) : undefined;
+  return buildSheetMetadata({
+    layout,
+    image,
+    fps: project.timeline.fps,
+    loop: project.timeline.loop,
+    pivot,
+    layers: project.layers.map((l) => ({ id: l.id, effectId: l.effectId })),
+    source: { projectId: project.id, versionId: project.activeVersionId },
+    ...(act ? { act } : {}),
   });
 }

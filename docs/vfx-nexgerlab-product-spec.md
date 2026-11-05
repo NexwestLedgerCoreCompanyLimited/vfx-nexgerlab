@@ -29,7 +29,8 @@ A beautiful, approachable, free desktop VFX editor for game developers, built on
 ### Non-goals for v0.1.0
 
 - No PixelLab API, external AI provider, bundled AI key, proxy service, credit resale, or private/web-scraped API.
-- No clone of PixelLab's non-VFX image, map, character, Game Builder, or MCP catalogue.
+- No PixelLab code, branding, or service. Character, map, tileset, and MCP capabilities are built here with original deterministic code.
+- No in-app AI model. AI clients connect through the local MCP stdio server.
 - No claim of unrestricted open-ended generative-AI understanding: the local composer exposes its supported vocabulary and parsed actions honestly.
 - No accounts, cloud sync, multiplayer collaboration, or automatic update installation.
 - No copy of the pixelfx gallery's look, name, logo, or the Patch Pixel font; no Claude Code skill or developer code-snippet panel.
@@ -87,7 +88,14 @@ Open Composer → type an English or Thai instruction → see recognized effect,
 - Fully offline operation except opening user-initiated documentation links.
 - English and Thai UI, accessible keyboard navigation, reduced motion, UI scaling, and remappable shortcuts.
 
-### v0.2.0 — Engine and interoperability expansion
+### v0.2.0 — Characters, maps, MCP, and more formats
+
+- Characters from a description: roles, colors, weapons, 1/4/8/16 directions, and eight animations.
+- Generated top-down, side-scroller, isometric, and 3D voxel maps, with tile painting and Wang tilesets.
+- Local MCP stdio server so AI clients can create effects, characters, tilesets, maps, and projects.
+- Import: PNG, GIF, JPEG, WebP, BMP, AVIF, Aseprite. Export: PNG, JPEG, WebP, BMP, TGA, GIF, APNG, Aseprite, sheet + JSON, ZIP, Tiled JSON, GLB, OBJ.
+
+### Later — Engine and interoperability expansion
 
 - Godot and Phaser export presets after real-engine import tests.
 - User-authored emitter and shape layers, height-based normal maps, and original procedural effect modules.
@@ -194,8 +202,8 @@ ProjectName/
 
 ## 8. Internationalization and community translation
 
-- `en` is the source locale; `th` is a required release locale, not a fallback-afterthought.
-- First run offers English and ไทย; settings can change language immediately without restart.
+- English is the primary language and the default on every system. Thai is a required release locale.
+- First run offers English first, then ไทย; settings can change language immediately without restart.
 - Namespaced JSON catalogs: `common`, `editor`, `timeline`, `export`, `settings`, `composer`, `effects`, `errors`, `help`.
 - No concatenated translated phrases; use ICU placeholders/plurals and localized dates/numbers.
 - English fallback per missing key in development; CI rejects missing keys/placeholders in release locales.
@@ -212,8 +220,8 @@ ProjectName/
 - Original project code and design use Business Source License 1.1 (`BUSL-1.1`), copyright `2026 NEXWEST LEDGER CORE COMPANY LIMITED and VFX NexgerLab contributors`.
 - Licensor: NEXWEST LEDGER CORE COMPANY LIMITED. Licensed Work: VFX NexgerLab original source code and original design. It excludes `src/engine/pixelfx/`, which stays under the MIT License.
 - pixelfx is vendored from `patch-gg/pixelfx`. Keep its MIT license, its `NOTICE.md`, per-file credits, and notices for Patch, Hugo Duprez (Sprite Fusion), and rehan-remade (Hollow Crown). Its `gallery/` folder and the Patch Pixel font are never copied. BSL gives no protection to the MIT portion; docs must say so plainly. Change Date: four years after each version's release; `2030-10-31` for v0.1.0. Change License: Apache License 2.0.
-- Additional Use Grant permits use, copying, modification, and sharing of the Licensed Work and modifications under BSL 1.1 for learning, research, open development, and game development. This expressly includes individual, studio, and client work that creates video games or game assets for paid games, advertising-supported games, in-app purchases, subscriptions, sponsorship, and other game monetization.
-- Before the Change Date, no one may sell, rent, license, sublicense, or charge for the software or its modified versions; offer it as a paid hosted service; commercially redistribute it as a development tool; or use it or its derivatives to create or operate a Competing Product. “Competing Product” means software or a service whose primary purpose is creating, editing, rendering, or exporting visual effects or substantially similar development tooling; a game containing rendered effects is not a Competing Product.
+- The Additional Use Grant matches MineOffice: production use for any purpose, including earning money, as long as you do not sell the Licensed Work. Change License is Apache-2.0, four years after each release.
+- Things users make, including effects, sprites, characters, maps, and game assets, are theirs and may be sold.
 - Public source, issues, pull requests, forks, and modifications are welcome under the same BSL restrictions. Before each version's Change Date describe the project as source-available, not OSI-approved open source. No trademark rights are granted.
 - Users retain ownership of imported assets and rendered exports; BSL does not relicense those outputs and expressly permits their use in monetized games. The restriction applies to commercial exploitation of the software/derivative software, not to games or assets made with it.
 - Third-party dependencies and fonts retain their own licenses and notices. Contributions are accepted under BSL 1.1 including its future Change License; no claim of unconditional commercial rights is made.

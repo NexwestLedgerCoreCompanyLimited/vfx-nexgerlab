@@ -8,7 +8,7 @@ import {
   type Preferences,
 } from '../../shared/models/preferences';
 
-export function createPreferencesService(dir: string, systemLocale: string) {
+export function createPreferencesService(dir: string) {
   const file = join(dir, 'preferences.json');
   let cached: Preferences | undefined;
 
@@ -17,7 +17,7 @@ export function createPreferencesService(dir: string, systemLocale: string) {
     try {
       cached = PreferencesSchema.parse(JSON.parse(await readFile(file, 'utf8')));
     } catch {
-      cached = defaultPreferences(systemLocale);
+      cached = defaultPreferences();
     }
     return cached;
   }

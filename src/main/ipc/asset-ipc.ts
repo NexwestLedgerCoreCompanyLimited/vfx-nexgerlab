@@ -2,7 +2,14 @@ import { dialog, ipcMain } from 'electron';
 import { z } from 'zod';
 import { IPC, type ProjectHandle } from '../../shared/contracts/ipc';
 import { AssetRefSchema, ProjectSchema } from '../../shared/schemas/project';
-import { importAsset, readAssetFrames, removeAsset } from '../services/asset-service';
+import { basename } from 'node:path';
+import {
+  importAsset,
+  importAssetBytes,
+  readAssetFrames,
+  readSource,
+  removeAsset,
+} from '../services/asset-service';
 
 const Strip = z.strictObject({ frameCount: z.number().int(), fps: z.number().int() }).optional();
 const Handle = z.object({
@@ -18,7 +25,12 @@ export function registerAssetIpc(assertKnown: (path: string) => Promise<void>): 
   ipcMain.handle(IPC.pickAssetFile, async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openFile'],
-      filters: [{ name: 'Sprites', extensions: ['png', 'gif'] }],
+      filters: [
+        {
+          name: 'Sprites',
+          extensions: ['png', 'gif', 'jpg', 'jpeg', 'webp', 'bmp', 'avif', 'ase', 'aseprite'],
+        },
+      ],
     });
     picked = result.canceled ? undefined : result.filePaths[0];
     return picked !== undefined;
@@ -32,6 +44,26 @@ export function registerAssetIpc(assertKnown: (path: string) => Promise<void>): 
     picked = undefined;
     return ref;
   });
+
+  ipcMain.handle(IPC.readPickedAsset, async () => {
+    if (!picked) throw new Error('No file picked');
+    return { name: basename(picked), bytes: new Uint8Array(await readSource(picked)) };
+  });
+
+  ipcMain.handle(
+    IPC.importAssetBytes,
+    async (_e, handle: unknown, name: unknown, bytes: unknown, strip: unknown) => {
+      if (!(bytes instanceof Uint8Array)) throw new Error('Expected bytes');
+      const parsed = Handle.parse(handle) as ProjectHandle;
+      await assertKnown(parsed.path);
+      picked = undefined;
+      return importAssetBytes(parsed, {
+        bytes: Buffer.from(bytes),
+        originalName: z.string().max(255).parse(name),
+        strip: Strip.parse(strip),
+      });
+    },
+  );
 
   ipcMain.handle(IPC.readAssetFrames, async (_e, path: unknown, ref: unknown) => {
     const target = z.string().max(4096).parse(path);

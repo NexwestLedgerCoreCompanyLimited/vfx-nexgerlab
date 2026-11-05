@@ -7,10 +7,10 @@ import { createPreferencesService } from '../../src/main/services/preferences-se
 const dir = () => mkdtempSync(join(tmpdir(), 'prefs-'));
 
 describe('preferences service', () => {
-  it('prefers Thai defaults for a Thai system locale', async () => {
-    const s = createPreferencesService(dir(), 'th-TH');
+  it('starts in English on every system', async () => {
+    const s = createPreferencesService(dir());
     expect(await s.get()).toMatchObject({
-      language: 'th',
+      language: 'en',
       hasChosenLanguage: false,
       hasSeenSplash: false,
     });
@@ -19,7 +19,7 @@ describe('preferences service', () => {
   it('falls back to defaults on a corrupt file and leaves no temp file after saving', async () => {
     const d = dir();
     writeFileSync(join(d, 'preferences.json'), '{broken');
-    const s = createPreferencesService(d, 'en-US');
+    const s = createPreferencesService(d);
     expect((await s.get()).language).toBe('en');
     await s.setLanguage('th');
     expect(JSON.parse(readFileSync(join(d, 'preferences.json'), 'utf8')).language).toBe('th');
@@ -32,15 +32,15 @@ describe('preferences service', () => {
       join(d, 'preferences.json'),
       JSON.stringify({ schemaVersion: 1, language: 'fr' }),
     );
-    expect((await createPreferencesService(d, 'en').get()).language).toBe('en');
+    expect((await createPreferencesService(d).get()).language).toBe('en');
   });
 
   it('records the choice and the splash', async () => {
     const d = dir();
-    const s = createPreferencesService(d, 'en');
+    const s = createPreferencesService(d);
     await s.setLanguage('en');
     await s.markSplashSeen();
-    expect(await createPreferencesService(d, 'en').get()).toMatchObject({
+    expect(await createPreferencesService(d).get()).toMatchObject({
       hasChosenLanguage: true,
       hasSeenSplash: true,
     });

@@ -23,6 +23,9 @@ export const IPC = {
   exportCommit: 'export:commit',
   exportAbort: 'export:abort',
   exportName: 'export:name',
+  getMcpConfig: 'mcp:get-config',
+  readPickedAsset: 'asset:read-picked',
+  importAssetBytes: 'asset:import-bytes',
 } as const;
 
 export interface AppInfo {
@@ -46,6 +49,13 @@ export interface RecentProject {
   name: string;
   openedAt: string;
   available: boolean;
+}
+
+export interface McpConfig {
+  command: string;
+  args: string[];
+  env: Record<string, string>;
+  outputDir: string;
 }
 
 export interface VfxlabApi {
@@ -72,6 +82,14 @@ export interface VfxlabApi {
   ): Promise<{ status: 'ok' | 'exists'; files: string[] }>;
   exportAbort(session: string): Promise<void>;
   exportName(name: string): Promise<string>;
+  getMcpConfig(): Promise<McpConfig>;
+  readPickedAsset(): Promise<{ name: string; bytes: Uint8Array }>;
+  importAssetBytes(
+    handle: ProjectHandle,
+    name: string,
+    bytes: Uint8Array,
+    strip?: StripLayout,
+  ): Promise<AssetRef>;
 }
 
 declare global {

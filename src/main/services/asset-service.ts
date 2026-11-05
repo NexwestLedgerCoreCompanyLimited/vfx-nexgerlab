@@ -146,19 +146,24 @@ function decode(
 
 const sha256 = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 
-export async function importAsset(
-  handle: ProjectHandle,
-  input: ImportAssetInput,
-): Promise<AssetRef> {
-  const size = await stat(input.sourcePath).then(
+export async function readSource(path: string): Promise<Buffer> {
+  const size = await stat(path).then(
     (s) => s.size,
     () => {
       throw new AssetError('missing');
     },
   );
   if (size > MAX_BYTES) throw new AssetError('too-large');
-  const bytes = await readFile(input.sourcePath);
-  const { kind, frames } = decode(bytes, input.strip);
+  return readFile(path);
+}
+
+export async function importAssetBytes(
+  handle: ProjectHandle,
+  input: { bytes: Buffer; originalName: string; strip?: StripLayout | undefined },
+): Promise<AssetRef> {
+  const { bytes, originalName, strip } = input;
+  if (bytes.length > MAX_BYTES) throw new AssetError('too-large');
+  const { kind, frames } = decode(bytes, strip);
   const hash = sha256(bytes);
   const existing = handle.project.assets.find((a) => a.hash === hash && a.kind === kind);
   if (existing) return existing;
@@ -174,14 +179,26 @@ export async function importAsset(
   const first = frames[0]!;
   return AssetRefSchema.parse({
     id: newId(),
-    originalName: basename(input.sourcePath),
+    originalName: basename(originalName).slice(0, 255),
     hash,
     kind,
     path,
     width: first.width,
     height: first.height,
     frameCount: frames.length,
-    ...(input.strip ? { fps: input.strip.fps } : {}),
+    ...(strip ? { fps: strip.fps } : {}),
+  });
+}
+
+export async function importAsset(
+  handle: ProjectHandle,
+  input: ImportAssetInput,
+): Promise<AssetRef> {
+  const bytes = await readSource(input.sourcePath);
+  return importAssetBytes(handle, {
+    bytes,
+    originalName: basename(input.sourcePath),
+    strip: input.strip,
   });
 }
 

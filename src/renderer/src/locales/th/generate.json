@@ -1,0 +1,69 @@
+{
+  "back": "คลัง",
+  "charactersTitle": "ตัวละคร",
+  "describe": "อธิบายตัวละครของคุณ",
+  "describeHint": "ระบุบทบาท สี และอาวุธ เป็นไทยหรืออังกฤษ คำที่ไม่รู้จักจะแสดงให้เห็น ไม่เดา",
+  "unknownWord": "ไม่รู้จักคำ: {{word}}",
+  "newLook": "สุ่มหน้าตาใหม่",
+  "animation": "อนิเมชัน",
+  "directions": "จำนวนทิศ",
+  "exportAll": "ส่งออกทุกอนิเมชัน",
+  "saved": "บันทึกแล้ว {{count}} ไฟล์",
+  "overwrite": "มีไฟล์อยู่แล้ว {{count}} ไฟล์ แทนที่ไหม",
+  "animations": {
+    "idle": "ยืน",
+    "walk": "เดิน",
+    "run": "วิ่ง",
+    "jump": "กระโดด",
+    "attack": "โจมตี",
+    "cast": "ร่ายเวท",
+    "hurt": "เจ็บ",
+    "death": "ตาย"
+  },
+  "mapsTitle": "แมพ",
+  "mapKind": "ประเภทแมพ",
+  "kinds": {
+    "topdown": "2D มุมบน",
+    "sidescroller": "2D ด้านข้าง",
+    "isometric": "ไอโซเมตริก",
+    "voxel3d": "3D วอกเซล"
+  },
+  "biome": "ภูมิประเทศ",
+  "biomes": {
+    "temperate": "เขตอบอุ่น",
+    "desert": "ทะเลทราย",
+    "snow": "หิมะ",
+    "island": "เกาะ"
+  },
+  "mapSize": "ขนาดแมพ",
+  "newMap": "สุ่มแมพใหม่",
+  "brush": "ทาสีช่อง",
+  "tiles": {
+    "water": "น้ำ",
+    "sand": "ทราย",
+    "grass": "หญ้า",
+    "forest": "ป่า",
+    "dirt": "ดิน",
+    "rock": "หิน",
+    "snow": "หิมะ"
+  },
+  "exportMap": "ส่งออกแมพ",
+  "connectTitle": "เชื่อม AI",
+  "connectIntro": "เพิ่มค่านี้ในการตั้งค่า MCP ของโปรแกรม AI จากนั้น AI จะสร้างเอฟเฟกต์ ตัวละคร tileset และแมพด้วยแอปนี้ผ่าน stdio ในเครื่อง",
+  "connectConfig": "การตั้งค่า MCP",
+  "copy": "คัดลอกการตั้งค่า",
+  "copied": "คัดลอกแล้ว",
+  "connectOutput": "ไฟล์จะอยู่ที่ {{path}}",
+  "connectPrivacy": "เซิร์ฟเวอร์ทำงานบนเครื่องของคุณ ไม่ใช้เครือข่าย และเขียนไฟล์เฉพาะในโฟลเดอร์นั้น",
+  "connectTools": "เครื่องมือ",
+  "tools": {
+    "list_effects": "ค้นหาเอฟเฟกต์ 244 ตัว",
+    "list_palettes": "ดูชุดสี",
+    "render_effect": "เรนเดอร์เอฟเฟกต์เป็นไฟล์",
+    "compose_effect": "สร้างเอฟเฟกต์จากคำสั่ง",
+    "create_character": "สร้างตัวละครพร้อมอนิเมชัน",
+    "create_map": "สร้างแมพ 2D ไอโซเมตริก หรือ 3D",
+    "create_tileset": "สร้าง Wang tileset",
+    "create_project": "สร้างโปรเจกต์เพื่อเปิดในแอปนี้"
+  }
+}

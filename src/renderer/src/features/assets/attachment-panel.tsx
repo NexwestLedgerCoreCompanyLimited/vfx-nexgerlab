@@ -1,4 +1,7 @@
 import { supportsCustomActor } from '../../../../engine/actor-adapter';
+import { encodePng } from '../../../../engine/exporters/png';
+import { ASE_MAGIC, decodeAseprite } from '../../../../engine/importers/aseprite';
+import type { ProjectHandle } from '../../../../shared/contracts/ipc';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,7 +14,39 @@ import type { AssetRef, SpriteAttachment, SpriteFx } from '../../../../shared/sc
 import { newId } from '../../../../shared/utils/id';
 import { renderClient } from '../../engine/client';
 import { useEditor } from '../editor/use-editor-store';
+import { decodeImage } from './decode-image';
 import { ImportDialog } from './import-dialog';
+
+/** PNG and GIF go straight to main. Other formats decode here and arrive as a PNG. */
+async function importPicked(handle: ProjectHandle, strip?: StripLayout): Promise<AssetRef> {
+  const { name, bytes } = await window.vfxlab.readPickedAsset();
+  const png = bytes[0] === 0x89 && bytes[1] === 0x50;
+  const gif = bytes[0] === 0x47 && bytes[1] === 0x49;
+  if (png || gif) return window.vfxlab.importAsset(handle, strip);
+  if (new DataView(bytes.buffer, bytes.byteOffset).getUint16(4, true) === ASE_MAGIC) {
+    const frames = decodeAseprite(bytes);
+    const first = frames[0]!;
+    const pixels = new Uint8ClampedArray(first.width * frames.length * first.height * 4);
+    frames.forEach((f, i) => {
+      for (let y = 0; y < first.height; y++) {
+        const row = f.rgba.subarray(y * first.width * 4, (y + 1) * first.width * 4);
+        pixels.set(row, (y * first.width * frames.length + i * first.width) * 4);
+      }
+    });
+    const strip2 = { width: first.width * frames.length, height: first.height, pixels };
+    return window.vfxlab.importAssetBytes(handle, name, encodePng(strip2), {
+      frameCount: frames.length,
+      fps: Math.max(1, Math.min(60, Math.round(1000 / first.durationMs))),
+    });
+  }
+  const frame = await decodeImage(bytes);
+  return window.vfxlab.importAssetBytes(
+    handle,
+    name,
+    encodePng({ width: frame.width, height: frame.height, pixels: frame.rgba }),
+    strip,
+  );
+}
 
 const FX_KINDS = ['aura', 'glow', 'light', 'recolor'] as const;
 const FX_DEFAULTS: Record<SpriteFx['kind'], Pick<SpriteFx, 'color' | 'placement'>> = {
@@ -126,10 +161,7 @@ export function AttachmentPanel({ onSave }: { onSave(): Promise<void> }) {
     const current = useEditor.getState();
     if (!current.handle || !current.project) return;
     try {
-      const ref = await window.vfxlab.importAsset(
-        { ...current.handle, project: current.project },
-        strip,
-      );
+      const ref = await importPicked({ ...current.handle, project: current.project }, strip);
       if (!current.project.assets.some((a) => a.id === ref.id)) {
         current.replaceProject({ ...current.project, assets: [...current.project.assets, ref] });
       }

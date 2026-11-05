@@ -13,10 +13,10 @@ export const PreferencesSchema = z.object({
 });
 export type Preferences = z.infer<typeof PreferencesSchema>;
 
-export function defaultPreferences(systemLocale: string): Preferences {
+export function defaultPreferences(): Preferences {
   return {
     schemaVersion: 1,
-    language: systemLocale.toLowerCase().startsWith('th') ? 'th' : 'en',
+    language: 'en',
     hasChosenLanguage: false,
     reducedMotion: false,
     uiScale: 1,

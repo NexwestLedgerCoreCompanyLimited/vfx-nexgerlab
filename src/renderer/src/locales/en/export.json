@@ -23,6 +23,26 @@
     "game-pack": {
       "name": "Game pack ZIP",
       "body": "Parts, directions, normal maps, and a manifest"
+    },
+    "webp": {
+      "name": "Animated WebP",
+      "body": "Small files with full transparency"
+    },
+    "aseprite": {
+      "name": "Aseprite",
+      "body": "Editable frames in Aseprite"
+    },
+    "bmp-sequence": {
+      "name": "BMP sequence",
+      "body": "One 32-bit BMP per frame"
+    },
+    "tga-sequence": {
+      "name": "TGA sequence",
+      "body": "One 32-bit TGA per frame"
+    },
+    "jpeg-sequence": {
+      "name": "JPEG sequence",
+      "body": "One JPEG per frame, on black"
     }
   },
   "directions": "Directions",

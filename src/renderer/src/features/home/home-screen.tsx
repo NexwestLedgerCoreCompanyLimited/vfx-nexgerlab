@@ -57,6 +57,15 @@ export function HomeScreen({ language, onLanguage }: Props) {
     [category, query, language],
   );
 
+  async function openFolder() {
+    try {
+      const handle = await window.vfxlab.openProject();
+      if (handle) editor.openHandle(handle);
+    } catch {
+      setNotice({ text: t('home.unrecoverable') });
+    }
+  }
+
   async function openRecent(path: string) {
     try {
       const handle = await window.vfxlab.openProject(path);
@@ -95,6 +104,19 @@ export function HomeScreen({ language, onLanguage }: Props) {
           <img src={logoUrl} alt="" />
           {t('brand')}
         </span>
+        <nav className="row" aria-label={t('home.library')}>
+          {(['characters', 'maps', 'connect'] as const).map((route) => (
+            <button
+              key={route}
+              className="chip"
+              type="button"
+              aria-pressed="false"
+              onClick={() => editor.go(route)}
+            >
+              {t(`home.nav.${route}`)}
+            </button>
+          ))}
+        </nav>
         <span className="sp" />
         <span className="tag ok">{t('home.offline')}</span>
         <LanguageMenu value={language} onChange={onLanguage} />
@@ -104,6 +126,9 @@ export function HomeScreen({ language, onLanguage }: Props) {
           onClick={() => editor.openBlank(t('newProject'), 'sprites')}
         >
           {t('home.importSprite')}
+        </button>
+        <button className="btn" type="button" onClick={() => void openFolder()}>
+          {t('home.open')}
         </button>
         <button className="btn pri" type="button" onClick={() => editor.openBlank(t('newProject'))}>
           {t('home.new')}

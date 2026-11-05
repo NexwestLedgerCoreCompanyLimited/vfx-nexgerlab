@@ -18,7 +18,18 @@ import {
   type ExportSettings,
 } from './export-service';
 
-const FORMATS: ExportFormat[] = ['spritesheet-json', 'gif', 'apng', 'png-sequence', 'game-pack'];
+const FORMATS: ExportFormat[] = [
+  'spritesheet-json',
+  'gif',
+  'apng',
+  'webp',
+  'aseprite',
+  'png-sequence',
+  'bmp-sequence',
+  'tga-sequence',
+  'jpeg-sequence',
+  'game-pack',
+];
 const COUNTS = [1, 4, 8, 16] as const;
 const PREVIEW_DELAY_MS = 250;
 

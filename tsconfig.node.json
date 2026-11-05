@@ -17,6 +17,8 @@
     "src/main",
     "src/preload",
     "src/shared",
+    "src/mcp",
+    "src/engine",
     "src/engine/exporters/gifenc.d.ts",
     "electron.vite.config.ts",
     "vitest.config.ts",

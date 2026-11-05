@@ -546,3 +546,61 @@ progress {
   width: 100%;
   accent-color: var(--cy);
 }
+
+/* generators */
+.gen {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+}
+.gen.connect {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+  overflow: auto;
+}
+.gen-stage {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+  display: grid;
+  place-items: center;
+}
+.char-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  align-content: center;
+}
+.char-cell {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.char-cell canvas {
+  width: 288px;
+  height: 216px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.map-canvas {
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+.swatch {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 2px;
+}
+.tool {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}

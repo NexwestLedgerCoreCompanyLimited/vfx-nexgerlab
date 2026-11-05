@@ -11,6 +11,7 @@ const NAMESPACES = [
   'settings',
   'composer',
   'effects',
+  'generate',
   'errors',
   'help',
 ];

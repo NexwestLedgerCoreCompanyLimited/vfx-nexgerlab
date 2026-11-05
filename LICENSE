@@ -1,6 +1,6 @@
 Business Source License 1.1
 
-License text copyright © 2017 MariaDB Corporation Ab, All Rights Reserved.
+License text copyright (c) 2017 MariaDB Corporation Ab, All Rights Reserved.
 "Business Source License" is a trademark of MariaDB Corporation Ab.
 
 -----------------------------------------------------------------------------
@@ -9,45 +9,48 @@ Parameters
 
 Licensor:             NEXWEST LEDGER CORE COMPANY LIMITED
 
-Licensed Work:        VFX NexgerLab, version 0.1.0. The Licensed Work is the
-                      original source code and original design in this
-                      repository. It excludes src/engine/pixelfx/, which
-                      remains under the MIT License, and other third-party
-                      material listed in THIRD_PARTY_NOTICES.md.
-                      (c) 2026 NEXWEST LEDGER CORE COMPANY LIMITED and
-                      VFX NexgerLab contributors
+Licensed Work:        VFX NexgerLab 0.2.0
+                      The Licensed Work is (c) 2026 NEXWEST LEDGER CORE COMPANY LIMITED
+                      It excludes src/engine/pixelfx/, which stays under the
+                      MIT License, and other third-party material listed in
+                      THIRD_PARTY_NOTICES.md.
 
-Additional Use Grant: You may use, copy, modify, and share the Licensed Work
-                      and modifications for learning, research, open
-                      development, and game development. This expressly
-                      includes individual, studio, and client work that
-                      creates video games or game assets for paid games,
-                      advertising-supported games, in-app purchases,
-                      subscriptions, sponsorship, and other game
-                      monetization.
+Additional Use Grant: You may make production use of the Licensed Work, and of
+                      versions you have modified and works you have derived
+                      from it, for any purpose, including to earn money, as
+                      long as you do not Sell the Licensed Work.
 
-                      You may not sell, rent, license, sublicense, or charge
-                      for the Licensed Work or modified versions; offer them
-                      as a paid hosted service; commercially redistribute
-                      them as a development tool; or use them to create or
-                      operate a Competing Product.
+                      "Sell the Licensed Work" means giving a third party the
+                      Licensed Work, a modified version of it, or a work
+                      derived from it, in exchange for money or anything else
+                      of value. This includes charging for a copy, a download,
+                      an installation or a license; selling it alone, in a
+                      bundle or as part of a paid product; renting, leasing or
+                      sublicensing it for a fee; and offering it to third
+                      parties as a paid hosted service whose main value is the
+                      Licensed Work itself.
 
-                      "Competing Product" means software or a service whose
-                      primary purpose is creating, editing, rendering, or
-                      exporting visual effects or substantially similar
-                      development tooling. A game containing rendered
-                      effects is not a Competing Product.
+                      For example, this grant lets you use the Licensed Work
+                      to make paid games; use it to do paid work for your
+                      clients; and charge for your own services and results.
 
-                      You own your imported assets and rendered exports, and
-                      this License places no restriction on them.
+                      Things you make by using the Licensed Work, such as
+                      effects, sprites, characters, maps, tilesets, and game
+                      assets, are not part of the Licensed Work. They are
+                      yours and you may sell them.
 
-Change Date:          Four years after the release of each version. For
-                      version 0.1.0: 2030-10-31.
+Change Date:          2030-11-05
 
 Change License:       Apache License, Version 2.0
 
-For information about alternative licensing arrangements for the Licensed
-Work, contact the Licensor through the project's GitHub repository.
+For information about alternative licensing arrangements for the Licensed Work,
+please open an issue in the project's repository.
+
+Notice
+
+The Business Source License (this document, or the "License") is not an Open
+Source license. However, the Licensed Work will eventually be made available
+under an Open Source License, as stated in this License.
 
 -----------------------------------------------------------------------------
 

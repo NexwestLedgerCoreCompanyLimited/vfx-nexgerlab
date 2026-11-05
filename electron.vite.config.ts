@@ -17,7 +17,12 @@ const cspMeta = (): Plugin => ({
 });
 
 export default defineConfig({
-  main: { build: { outDir: 'out/main' } },
+  main: {
+    build: {
+      outDir: 'out/main',
+      rollupOptions: { input: { index: 'src/main/index.ts', mcp: 'src/mcp/index.ts' } },
+    },
+  },
   preload: { build: { outDir: 'out/preload' } },
   renderer: {
     root: 'src/renderer',

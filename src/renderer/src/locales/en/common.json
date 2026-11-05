@@ -26,7 +26,13 @@
     "recoverAction": "Restore backup",
     "unrecoverable": "This project is damaged and has no usable backup.",
     "tooNew": "This project was made by a newer version.",
-    "notFound": "The project folder could not be found."
+    "notFound": "The project folder could not be found.",
+    "nav": {
+      "characters": "Characters",
+      "maps": "Maps",
+      "connect": "Connect AI"
+    },
+    "open": "Open project"
   },
   "language": {
     "label": "Language",
