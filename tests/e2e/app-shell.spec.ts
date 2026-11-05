@@ -1,6 +1,24 @@
 import { expect, test } from '@playwright/test';
 import { launch } from '../helpers/app';
 
+const BRIDGE = [
+  'applyBackup',
+  'createProject',
+  'getAppInfo',
+  'getPreferences',
+  'importAsset',
+  'listRecentProjects',
+  'markSplashSeen',
+  'openProject',
+  'pickAssetFile',
+  'readAssetFrames',
+  'recoverProject',
+  'removeAsset',
+  'removeRecentProject',
+  'saveProject',
+  'setLanguage',
+];
+
 test('secure shell exposes only the typed bridge', async () => {
   const { app, page } = await launch();
   const probe = await page.evaluate(() => ({
@@ -10,19 +28,7 @@ test('secure shell exposes only the typed bridge', async () => {
   }));
   expect(probe.require).toBe('undefined');
   expect(probe.process).toBe('undefined');
-  expect(probe.keys).toEqual([
-    'applyBackup',
-    'createProject',
-    'getAppInfo',
-    'getPreferences',
-    'listRecentProjects',
-    'markSplashSeen',
-    'openProject',
-    'recoverProject',
-    'removeRecentProject',
-    'saveProject',
-    'setLanguage',
-  ]);
+  expect(probe.keys).toEqual(BRIDGE);
   expect(await page.evaluate(() => window.vfxlab.getAppInfo())).toMatchObject({
     name: 'VFX NexgerLab',
   });

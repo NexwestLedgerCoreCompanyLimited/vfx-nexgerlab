@@ -8,7 +8,9 @@ const Path = z.string().min(1).max(4096);
 const Name = z.string().trim().min(1).max(120);
 
 /** The renderer can only reach folders the user picked or already has in recents. */
-export function registerProjectIpc(service: ReturnType<typeof createProjectService>): void {
+export function registerProjectIpc(
+  service: ReturnType<typeof createProjectService>,
+): (path: string) => Promise<void> {
   const opened = new Set<string>();
 
   async function assertKnown(path: string): Promise<void> {
@@ -67,4 +69,6 @@ export function registerProjectIpc(service: ReturnType<typeof createProjectServi
   ipcMain.handle(IPC.removeRecentProject, (_e, path: unknown) =>
     service.removeRecentProject(Path.parse(path)),
   );
+
+  return assertKnown;
 }

@@ -13,6 +13,10 @@ const api: VfxlabApi = {
   applyBackup: (path) => ipcRenderer.invoke(IPC.applyBackup, path),
   listRecentProjects: () => ipcRenderer.invoke(IPC.listRecentProjects),
   removeRecentProject: (path) => ipcRenderer.invoke(IPC.removeRecentProject, path),
+  pickAssetFile: () => ipcRenderer.invoke(IPC.pickAssetFile),
+  importAsset: (handle, strip) => ipcRenderer.invoke(IPC.importAsset, handle, strip),
+  readAssetFrames: (path, ref) => ipcRenderer.invoke(IPC.readAssetFrames, path, ref),
+  removeAsset: (path, project, id) => ipcRenderer.invoke(IPC.removeAsset, path, project, id),
 };
 
 contextBridge.exposeInMainWorld('vfxlab', api);

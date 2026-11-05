@@ -1,5 +1,6 @@
 import type { Language, Preferences } from '../models/preferences';
-import type { ProjectV1 } from '../schemas/project';
+import type { AssetFrame, StripLayout } from '../models/asset';
+import type { AssetRef, ProjectV1 } from '../schemas/project';
 
 export const IPC = {
   getAppInfo: 'app:get-info',
@@ -13,6 +14,10 @@ export const IPC = {
   applyBackup: 'project:apply-backup',
   listRecentProjects: 'project:list-recent',
   removeRecentProject: 'project:remove-recent',
+  pickAssetFile: 'asset:pick',
+  importAsset: 'asset:import',
+  readAssetFrames: 'asset:read-frames',
+  removeAsset: 'asset:remove',
 } as const;
 
 export interface AppInfo {
@@ -50,6 +55,10 @@ export interface VfxlabApi {
   applyBackup(path: string): Promise<ProjectHandle>;
   listRecentProjects(): Promise<RecentProject[]>;
   removeRecentProject(path: string): Promise<void>;
+  pickAssetFile(): Promise<boolean>;
+  importAsset(handle: ProjectHandle, strip?: StripLayout): Promise<AssetRef>;
+  readAssetFrames(path: string, ref: AssetRef): Promise<AssetFrame[]>;
+  removeAsset(path: string, project: ProjectV1, assetId: string): Promise<void>;
 }
 
 declare global {

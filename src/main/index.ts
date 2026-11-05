@@ -2,6 +2,7 @@ import { BrowserWindow, app, ipcMain, session } from 'electron';
 import { join } from 'node:path';
 import { IPC, type AppInfo } from '../shared/contracts/ipc';
 import { LanguageSchema } from '../shared/models/preferences';
+import { registerAssetIpc } from './ipc/asset-ipc';
 import { registerProjectIpc } from './ipc/project-ipc';
 import { WEB_PREFERENCES } from './security';
 import { nodeFileSystem } from './services/file-system-adapter';
@@ -47,12 +48,13 @@ void app.whenReady().then(() => {
     preferences.setLanguage(LanguageSchema.parse(language)),
   );
   ipcMain.handle(IPC.markSplashSeen, () => preferences.markSplashSeen());
-  registerProjectIpc(
+  const assertKnown = registerProjectIpc(
     createProjectService({
       fs: nodeFileSystem,
       recentFile: join(app.getPath('userData'), 'recent-projects.json'),
     }),
   );
+  registerAssetIpc(assertKnown);
   denyNetwork();
   createWindow();
   app.on('activate', () => {

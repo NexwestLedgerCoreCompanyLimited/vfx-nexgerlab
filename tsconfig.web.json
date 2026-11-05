@@ -18,6 +18,8 @@
     "src/engine",
     "src/main/services",
     "src/main/security.ts",
-    "tests/unit"
+    "tests/unit",
+    "tests/helpers/images.ts",
+    "tests/helpers/gifenc.d.ts"
   ]
 }
