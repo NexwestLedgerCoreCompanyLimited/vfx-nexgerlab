@@ -23,6 +23,7 @@ All notable changes follow Semantic Versioning. Each release uses these categori
 ### Known Issues
 
 - Installers are unsigned, so macOS and Windows show a warning.
+- Effects that paint on the character include the stock character unless a custom sprite replaces it.
 - Automatic updates are not available yet.
 - Export format support has not been tested inside real game engines.
 - Thai copy and usability have not yet had a human review.

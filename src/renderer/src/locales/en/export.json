@@ -41,5 +41,6 @@
   "tooLarge": "This export is too large. Use fewer frames or directions.",
   "failed": "The export failed, so nothing was written.",
   "normal": "Normal map",
-  "normalStrength": "Normal strength"
+  "normalStrength": "Normal strength",
+  "stockBody": "This effect paints on the character, so the stock character is in the output. Use your own sprite in Studio to replace it."
 }

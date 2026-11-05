@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { getEffect } from '../../src/engine/effect-registry';
-import { createProjectFromEffect, exportFrameCount } from '../../src/engine/project-factory';
+import { getEffect, listEffects } from '../../src/engine/effect-registry';
+import {
+  createProjectFromEffect,
+  exportFrameCount,
+  usesStockBody,
+} from '../../src/engine/project-factory';
 import { ProjectSchema } from '../../src/shared/schemas/project';
 
 describe('createProjectFromEffect', () => {
@@ -48,5 +52,25 @@ describe('createProjectFromEffect', () => {
 
   it('refuses an unknown effect', () => {
     expect(() => createProjectFromEffect('no/such', { name: 'x', language: 'en' })).toThrow();
+  });
+});
+
+describe('usesStockBody', () => {
+  it('flags effects that paint the stock character into their pixels', () => {
+    const on = listEffects().find((e) => e.module.act?.onBody)!;
+    expect(usesStockBody(createProjectFromEffect(on.id, { name: 'x', language: 'en' }))).toBe(true);
+    expect(
+      usesStockBody(createProjectFromEffect('fire/campfire', { name: 'x', language: 'en' })),
+    ).toBe(false);
+  });
+
+  it('clears the flag once a custom sprite stands in', () => {
+    const on = listEffects().find((e) => e.module.act?.onBody)!;
+    const p = createProjectFromEffect(on.id, { name: 'x', language: 'en' });
+    const swapped = {
+      ...p,
+      layers: [{ ...p.layers[0]!, actorAssetId: '00000000-0000-4000-8000-000000000009' }],
+    };
+    expect(usesStockBody(swapped)).toBe(false);
   });
 });

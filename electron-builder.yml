@@ -6,6 +6,7 @@ directories:
 files:
   - out/**
   - '!out/renderer/e2e*'
+  - '!out/renderer/assets/e2e-*'
   - package.json
 extraResources:
   - from: THIRD_PARTY_NOTICES.md

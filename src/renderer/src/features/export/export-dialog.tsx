@@ -4,6 +4,7 @@ import { calculateSheetLayout, packSheet } from '../../../../engine/exporters/sp
 import { buildExportMetadata } from '../../../../engine/exporters/metadata';
 import { resolveDirectionProject } from '../../../../engine/directions';
 import { generateNormalMap } from '../../../../engine/normal-map';
+import { usesStockBody } from '../../../../engine/project-factory';
 import { paintFrame } from '../../engine/canvas-renderer';
 import { renderClient } from '../../engine/client';
 import { useEditor } from '../editor/use-editor-store';
@@ -220,6 +221,7 @@ export function ExportScreen() {
           <span className="sect">{t('json')}</span>
           <pre className="panel json">{json}</pre>
           <p className="muted small">{t('engineNote')}</p>
+          {usesStockBody(project) && <p className="warn small">{t('stockBody')}</p>}
           <span className="sp" />
           <label className="label" htmlFor="export-name">
             {t('fileName')}

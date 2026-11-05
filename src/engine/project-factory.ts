@@ -104,3 +104,8 @@ export function exportFrameCount(project: ProjectV1): number {
   }
   return Math.min(project.timeline.frames, frames);
 }
+
+/** Some effects paint on the character, so without a custom sprite their pixels include the stock one. */
+export function usesStockBody(project: ProjectV1): boolean {
+  return project.layers.some((l) => getEffect(l.effectId)?.act?.onBody && !l.actorAssetId);
+}
