@@ -9,7 +9,10 @@ export function freshProfile(): string {
 
 export async function launch(profile = freshProfile(), env: Record<string, string> = {}) {
   const app: ElectronApplication = await electron.launch({
-    args: ['.', `--user-data-dir=${profile}`],
+    // set VFXLAB_APP to test a packaged app instead of the build folder
+    ...(process.env.VFXLAB_APP
+      ? { executablePath: process.env.VFXLAB_APP, args: [`--user-data-dir=${profile}`] }
+      : { args: ['.', `--user-data-dir=${profile}`] }),
     env: { ...(process.env as Record<string, string>), ...env },
   });
   const page: Page = await app.firstWindow();

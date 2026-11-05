@@ -1,5 +1,5 @@
 import { DIRECTION_ORDER, type Direction, type DirectionCount } from '../shared/directions';
-import type { EffectLayer, ProjectV1 } from '../shared/schemas/project';
+import type { DirectionOverride, EffectLayer, ProjectV1 } from '../shared/schemas/project';
 import { listEffects } from './effect-registry';
 
 export type DirectionBehavior = 'rotate-2d' | 'fixed';
@@ -81,4 +81,28 @@ export function resolveDirectionProject(
   });
   const canvas = room ? { ...project.canvas, width: room.side, height: room.side } : project.canvas;
   return { ...project, canvas, layers };
+}
+
+export function setDirectionCount(project: ProjectV1, count: DirectionCount): ProjectV1 {
+  return { ...project, directions: { count, overrides: project.directions?.overrides ?? {} } };
+}
+
+export function setDirectionOverride(
+  project: ProjectV1,
+  direction: Direction,
+  patch: DirectionOverride,
+): ProjectV1 {
+  const overrides = project.directions?.overrides ?? {};
+  return {
+    ...project,
+    directions: {
+      count: project.directions?.count ?? 1,
+      overrides: { ...overrides, [direction]: { ...overrides[direction], ...patch } },
+    },
+  };
+}
+
+export function resetDirectionOverride(project: ProjectV1, direction: Direction): ProjectV1 {
+  const { [direction]: _removed, ...overrides } = project.directions?.overrides ?? {};
+  return { ...project, directions: { count: project.directions?.count ?? 1, overrides } };
 }

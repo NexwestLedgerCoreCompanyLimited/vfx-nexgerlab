@@ -27,4 +27,4 @@ Full license texts ship in each `@fontsource` package.
 
 ## Runtime libraries
 
-React, React DOM, Zustand, Zod, i18next, and react-i18next are MIT licensed. Electron is MIT licensed and bundles Chromium, whose notices ship with the app as `LICENSES.chromium.html`.
+React, React DOM, Zustand, Zod, i18next, react-i18next, pngjs, gifuct-js, gifenc, and fflate are MIT licensed. Their license texts ship in each package. Electron is MIT licensed and bundles Chromium, whose notices ship with the app as `LICENSES.chromium.html`.

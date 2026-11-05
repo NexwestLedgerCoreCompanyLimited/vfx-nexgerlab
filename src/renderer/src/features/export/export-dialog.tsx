@@ -27,7 +27,7 @@ export function ExportScreen() {
   const { project, go, handle } = useEditor();
   const [settings, setSettings] = useState<ExportSettings>({
     format: 'spritesheet-json',
-    directions: 1,
+    directions: project?.directions?.count ?? 1,
     split: false,
     includeAct: true,
     normal: false,

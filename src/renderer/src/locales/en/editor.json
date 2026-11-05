@@ -148,5 +148,11 @@
   "fxStrength": "Strength",
   "removeFx": "Remove",
   "useAsCharacter": "Use as character for this effect",
-  "usingCharacter": "Used as character"
+  "usingCharacter": "Used as character",
+  "directions": "Directions",
+  "direction": "Direction to edit",
+  "directionAngle": "Angle override",
+  "directionSpeed": "Speed override",
+  "hideInDirection": "Hide this layer in this direction",
+  "resetDirection": "Reset this direction"
 }

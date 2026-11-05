@@ -2,8 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   DIRECTION_BEHAVIOR,
   directionAngle,
+  resetDirectionOverride,
   resolveDirectionProject,
+  setDirectionCount,
+  setDirectionOverride,
 } from '../../src/engine/directions';
+import { ProjectSchema } from '../../src/shared/schemas/project';
 import { listEffects } from '../../src/engine/effect-registry';
 import { createProjectFromEffect } from '../../src/engine/project-factory';
 import { hashPixels } from '../../src/engine/frame-hash';
@@ -111,5 +115,27 @@ describe('resolveDirectionProject', () => {
     const base = P('projectiles/arrow');
     const hashes = DIRECTION_ORDER[4].map((d) => hash(resolveDirectionProject(base, d, 4), 5));
     expect(new Set(hashes).size).toBe(4);
+  });
+});
+
+describe('direction overrides', () => {
+  it('sets, merges, and resets one direction without touching others', () => {
+    let p = setDirectionCount(P('projectiles/arrow'), 4);
+    p = setDirectionOverride(p, 'W', { angle: 1 });
+    p = setDirectionOverride(p, 'W', { speed: 2 });
+    p = setDirectionOverride(p, 'N', { angle: 2 });
+    expect(p.directions?.overrides.W).toEqual({ angle: 1, speed: 2 });
+    p = resetDirectionOverride(p, 'W');
+    expect(p.directions?.overrides.W).toBeUndefined();
+    expect(p.directions?.overrides.N).toEqual({ angle: 2 });
+    expect(ProjectSchema.safeParse(p).success).toBe(true);
+  });
+
+  it('keeps overrides when the count changes and they still apply', () => {
+    const p = setDirectionCount(
+      setDirectionOverride(setDirectionCount(P('projectiles/arrow'), 4), 'W', { angle: 1 }),
+      8,
+    );
+    expect(p.directions).toMatchObject({ count: 8, overrides: { W: { angle: 1 } } });
   });
 });

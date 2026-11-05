@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { resolveDirectionProject } from '../../../../engine/directions';
 import { restoreVersion } from '../../../../engine/versions';
 import type { BackdropKind, LayerError } from '../../../../engine/render-types';
 import type { Language } from '../../../../shared/models/preferences';
@@ -60,10 +61,15 @@ export function EditorScreen({
     [backdrop],
   );
   const errorMap = useMemo(() => new Map(errors.map((e) => [e.layerId, e.message])), [errors]);
-  if (!project) return null;
-
-  const parent = project.versions.find((v) => v.id === project.activeVersionId)?.parentId;
-  const shown = before && parent ? restoreVersion(project, parent) : project;
+  const parent = project?.versions.find((v) => v.id === project.activeVersionId)?.parentId;
+  const shown = useMemo(() => {
+    if (!project) return undefined;
+    const compared = before && parent ? restoreVersion(project, parent) : project;
+    const count = project.directions?.count ?? 1;
+    const direction = editor.previewDirection;
+    return direction && count > 1 ? resolveDirectionProject(compared, direction, count) : compared;
+  }, [project, before, parent, editor.previewDirection]);
+  if (!project || !shown) return null;
 
   return (
     <div className="studio">

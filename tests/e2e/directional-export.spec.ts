@@ -37,3 +37,39 @@ for (const count of [4, 8, 16] as const) {
     await app.close();
   });
 }
+
+test('directional export applies a Studio override and it survives reopening', async () => {
+  const parent = mkdtempSync(join(tmpdir(), 'd-'));
+  const { app, page, profile } = await launch();
+  await stubFolderPicker(app, [parent]);
+  await home(page);
+  await page.getByRole('searchbox').fill('laser bolt');
+  await page.locator('.tile').first().click();
+  await page.getByRole('button', { name: 'Open in Studio' }).click();
+  await page.getByRole('button', { name: 'Pause' }).click();
+  await page
+    .getByRole('group', { name: 'Directions' })
+    .getByRole('button', { name: '4', exact: true })
+    .click();
+  await page.getByLabel('Direction to edit').selectOption('W');
+  await page
+    .getByRole('group', { name: 'Speed override' })
+    .getByRole('button', { name: '2×' })
+    .click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByRole('status')).toHaveText('Saved');
+  await app.close();
+
+  const again = await launch(profile);
+  await again.page.locator('canvas').first().click();
+  await again.page.getByRole('button', { name: 'Laser bolt', exact: true }).click();
+  await expect(
+    again.page.getByLabel('Direction to edit').locator('option', { hasText: 'W *' }),
+  ).toHaveCount(1);
+  await again.page.getByLabel('Direction to edit').selectOption('W');
+  await again.page.getByRole('button', { name: 'Reset this direction' }).click();
+  await expect(
+    again.page.getByLabel('Direction to edit').locator('option', { hasText: 'W *' }),
+  ).toHaveCount(0);
+  await again.app.close();
+});

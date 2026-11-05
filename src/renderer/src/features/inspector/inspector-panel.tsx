@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { DirectionPanel } from '../directions/direction-panel';
 import { useEditor } from '../editor/use-editor-store';
 import { ActControls } from '../timeline/act-lane';
 import {
@@ -114,6 +115,7 @@ export function InspectorPanel() {
         <EffectOptions layer={layer} />
       </section>
       <Advanced layer={layer} />
+      <DirectionPanel />
     </aside>
   );
 }

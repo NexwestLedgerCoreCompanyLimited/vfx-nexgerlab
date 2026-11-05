@@ -148,5 +148,11 @@
   "fxStrength": "ความแรง",
   "removeFx": "ลบ",
   "useAsCharacter": "ใช้เป็นตัวละครของเอฟเฟกต์นี้",
-  "usingCharacter": "ใช้เป็นตัวละครอยู่"
+  "usingCharacter": "ใช้เป็นตัวละครอยู่",
+  "directions": "จำนวนทิศ",
+  "direction": "ทิศที่จะแก้",
+  "directionAngle": "กำหนดมุมเฉพาะทิศ",
+  "directionSpeed": "กำหนดความเร็วเฉพาะทิศ",
+  "hideInDirection": "ซ่อนเลเยอร์นี้ในทิศนี้",
+  "resetDirection": "คืนค่าทิศนี้"
 }

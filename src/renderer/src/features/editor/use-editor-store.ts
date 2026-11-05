@@ -3,6 +3,7 @@ import type { EditorCommand } from '../../../../engine/commands';
 import { createHistory, execute, redo, undo, type History } from '../../../../engine/history';
 import { createProjectFromEffect } from '../../../../engine/project-factory';
 import type { ProjectHandle } from '../../../../shared/contracts/ipc';
+import type { Direction } from '../../../../shared/directions';
 import { newProject } from '../../../../shared/models/new-project';
 import type { ProjectV1 } from '../../../../shared/schemas/project';
 
@@ -19,6 +20,7 @@ interface EditorState {
   playback: Playback;
   zoom: number;
   startTab: 'layers' | 'sprites';
+  previewDirection?: Direction | undefined;
   dirty: boolean;
   renderRevision: number;
   reset(): void;
@@ -36,6 +38,7 @@ interface EditorState {
   select(layerId: string | undefined): void;
   setPlayback(playback: Playback): void;
   setZoom(zoom: number): void;
+  setPreviewDirection(direction: Direction | undefined): void;
 }
 
 const blank = {
@@ -48,6 +51,7 @@ const blank = {
   playback: 'playing' as Playback,
   zoom: 2,
   startTab: 'layers' as 'layers' | 'sprites',
+  previewDirection: undefined,
   dirty: false,
   renderRevision: 0,
 };
@@ -75,6 +79,7 @@ export const useEditor = create<EditorState>((set, get) => {
       currentFrame: 0,
       playback: 'playing',
       dirty: false,
+      previewDirection: undefined,
     });
 
   return {
@@ -113,5 +118,6 @@ export const useEditor = create<EditorState>((set, get) => {
     select: (selectedLayerId) => set({ selectedLayerId }),
     setPlayback: (playback) => set({ playback }),
     setZoom: (zoom) => set({ zoom }),
+    setPreviewDirection: (previewDirection) => set({ previewDirection }),
   };
 });
