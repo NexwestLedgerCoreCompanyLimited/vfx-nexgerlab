@@ -69,3 +69,8 @@ describe('character rendering', () => {
     expect(sheet.metadata.meta.vfxlab.directions.order).toEqual(['S', 'W', 'N', 'E']);
   });
 });
+
+it('reads staff as the long weapon, in both languages', () => {
+  expect(parseCharacterDescription('wizard with a staff', 1).spec.weapon).toBe('spear');
+  expect(parseCharacterDescription('พ่อมดถือไม้เท้า', 1).unsupported).toEqual([]);
+});

@@ -97,3 +97,15 @@ describe('animated WebP', () => {
     expect(() => assembleAnimatedWebp([new Uint8Array(30)], [10], 4, 4, true)).toThrow();
   });
 });
+
+it('refuses an Aseprite file that declares more pixels than it could hold', () => {
+  const bytes = new Uint8Array(128);
+  const view = new DataView(bytes.buffer);
+  view.setUint32(0, bytes.length, true);
+  view.setUint16(4, 0xa5e0, true);
+  view.setUint16(6, 600, true);
+  view.setUint16(8, 4096, true);
+  view.setUint16(10, 4096, true);
+  view.setUint16(12, 32, true);
+  expect(() => decodeAseprite(bytes)).toThrow('too-large');
+});

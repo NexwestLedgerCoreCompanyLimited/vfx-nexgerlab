@@ -13,6 +13,7 @@ const COMPRESSED_IMAGE = 2;
 const RGBA_DEPTH = 32;
 const MAX_SIDE = 4096;
 const MAX_FRAMES = 600;
+const MAX_TOTAL_PIXELS = 64_000_000;
 
 /** Reads RGBA Aseprite files, compositing visible cels by layer order. Indexed files are refused. */
 export function decodeAseprite(bytes: Uint8Array): AssetFrame[] {
@@ -26,7 +27,8 @@ export function decodeAseprite(bytes: Uint8Array): AssetFrame[] {
   if (v.getUint16(12, true) !== RGBA_DEPTH) throw new Error('unsupported');
   if (width === 0 || height === 0 || width > MAX_SIDE || height > MAX_SIDE)
     throw new Error('too-large');
-  if (count === 0 || count > MAX_FRAMES) throw new Error('too-large');
+  if (count === 0 || count > MAX_FRAMES || count * width * height > MAX_TOTAL_PIXELS)
+    throw new Error('too-large');
 
   const frames: AssetFrame[] = [];
   let at = HEADER;

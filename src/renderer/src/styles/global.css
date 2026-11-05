@@ -587,7 +587,8 @@ progress {
   object-fit: contain;
 }
 .map-canvas {
-  width: 100%;
+  /* keeps the whole map in view, without letterboxing that would offset tile painting */
+  width: min(100%, calc(100vh - 90px));
   height: auto;
   touch-action: none;
 }
@@ -608,4 +609,13 @@ progress {
 .num input {
   width: 64px;
   padding: 2px 6px;
+}
+
+.side {
+  overflow-y: auto;
+}
+
+.connect .json {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }

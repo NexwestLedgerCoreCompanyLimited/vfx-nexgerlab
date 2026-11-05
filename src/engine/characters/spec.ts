@@ -185,6 +185,10 @@ const WEAPON_TERMS: Array<[string, string]> = [
   ['spear', 'spear'],
   ['หอก', 'spear'],
   ['axe', 'hammer'],
+  // the rig has no staff, and a spear is the same long two-handed shape
+  ['staff', 'spear'],
+  ['ไม้เท้า', 'spear'],
+  ['คทา', 'spear'],
   ['ขวาน', 'hammer'],
 ];
 
